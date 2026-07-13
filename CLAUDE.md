@@ -15,9 +15,11 @@ not a static marketing brochure.
 - **GSAP** and **Motion** for animation
 - **Vercel** for hosting, **GitHub** for source control
 
-Not all of these are installed yet — the project currently only has the
-Next.js + TypeScript + Tailwind foundation. Sanity, GSAP, and Motion will be
-added in later milestones.
+Sanity is installed and wired up: embedded Studio at `/studio`, dataset
+`production`, draft mode + the Presentation tool for click-to-edit visual
+editing. Real schema and content types are still to be built — so far only a
+placeholder `test` document type exists, used to prove the visual editing
+loop end to end. GSAP and Motion have not been added yet.
 
 ## Design direction: Marginalia
 
