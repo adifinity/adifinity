@@ -12,7 +12,7 @@ import {structureTool} from 'sanity/structure'
 // Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
 import {apiVersion, dataset, projectId} from './src/sanity/env'
 import {schema} from './src/sanity/schemaTypes'
-import {structure} from './src/sanity/structure'
+import {SINGLETON_TYPES, structure} from './src/sanity/structure'
 
 export default defineConfig({
   basePath: '/studio',
@@ -20,6 +20,20 @@ export default defineConfig({
   dataset,
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema,
+  // Site Settings is a true singleton: block it from the global "create
+  // new document" menu and from the "Duplicate" action so a second copy
+  // can never be created. The only way in is the fixed-id link in the
+  // Structure Tool (see structure.ts).
+  document: {
+    newDocumentOptions: (prev, {creationContext}) => {
+      if (creationContext.type === 'global') {
+        return prev.filter((templateItem) => !SINGLETON_TYPES.has(templateItem.templateId))
+      }
+      return prev
+    },
+    actions: (prev, {schemaType}) =>
+      SINGLETON_TYPES.has(schemaType) ? prev.filter(({action}) => action !== 'duplicate') : prev,
+  },
   plugins: [
     structureTool({structure}),
     presentationTool({
@@ -38,6 +52,17 @@ export default defineConfig({
                 {
                   title: doc?.title || 'Untitled test document',
                   href: '/test-preview',
+                },
+              ],
+            }),
+          }),
+          workItem: defineLocations({
+            select: {title: 'title', slug: 'slug.current'},
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled work item',
+                  href: doc?.slug ? `/work/${doc.slug}` : '/work',
                 },
               ],
             }),
