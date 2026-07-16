@@ -127,6 +127,32 @@ export const RECENT_READING_QUERY = defineQuery(`
   }
 `)
 
+// Real entries from across the archive for the homepage's margin
+// fragments (and later the Ledger Sort's source material). currentUpdate
+// is deliberately excluded — it is ephemeral "now" content, not part of
+// the long-term catalogue. Ordered deterministically by editorial
+// publication date, falling back to creation time.
+export const ARCHIVE_FRAGMENTS_QUERY = defineQuery(`
+  *[_type in ["workItem", "note", "fieldNote", "experience", "readingEntry"] && ${PUBLIC_ENTRY_FILTER}]
+    | order(coalesce(publishedAt, _createdAt) desc) [0...8] {
+    _id,
+    _type,
+    title,
+    "slug": slug.current,
+    date,
+    dateRead,
+    dateVisited,
+    dateRange,
+    primaryCategory,
+    noteType,
+    locationName,
+    country,
+    author,
+    organisation,
+    "experienceType": type
+  }
+`)
+
 // ─────────────────────────────────────────────────────────────────────
 // Result types — manual, matching the pattern the /work/[slug] page
 // established. Every field a query can return as missing is nullable.
@@ -239,4 +265,22 @@ export type ReadingListItem = {
   highlightOrIdea: string | null
   genreOrTheme: string[] | null
   coverImage: SanityImageValue | null
+}
+
+export type ArchiveFragment = {
+  _id: string
+  _type: 'workItem' | 'note' | 'fieldNote' | 'experience' | 'readingEntry'
+  title: string | null
+  slug: string | null
+  date: string | null
+  dateRead: string | null
+  dateVisited: string | null
+  dateRange: DateRangeValue | null
+  primaryCategory: string | null
+  noteType: string | null
+  locationName: string | null
+  country: string | null
+  author: string | null
+  organisation: string | null
+  experienceType: string | null
 }

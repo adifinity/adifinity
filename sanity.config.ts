@@ -38,13 +38,26 @@ export default defineConfig({
     structureTool({structure}),
     presentationTool({
       previewUrl: {
-        initial: '/test-preview',
+        // The real homepage is the default editing surface as of Phase 4
+        // Stage 3. /test-preview remains available as the regression route.
+        initial: '/',
         previewMode: {
           enable: '/api/draft-mode/enable',
         },
       },
       resolve: {
         locations: {
+          siteSettings: defineLocations({
+            select: {title: 'siteTitle'},
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Site settings',
+                  href: '/',
+                },
+              ],
+            }),
+          }),
           test: defineLocations({
             select: {title: 'title'},
             resolve: (doc) => ({
