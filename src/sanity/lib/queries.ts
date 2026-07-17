@@ -153,6 +153,45 @@ export const ARCHIVE_FRAGMENTS_QUERY = defineQuery(`
   }
 `)
 
+// Everything the interactive Index needs in one round trip: per-section
+// entry counts, a small recent-entries preview (same shape as the
+// archive fragments so the catalog-label helpers apply), and the
+// correspondence fields from Site Settings. All gated exactly like the
+// rest of the layer; currentUpdate counts on its own `active` flag.
+export const INDEX_QUERY = defineQuery(`{
+  "counts": {
+    "work": count(*[_type == "workItem" && ${PUBLIC_ENTRY_FILTER}]),
+    "notes": count(*[_type == "note" && ${PUBLIC_ENTRY_FILTER}]),
+    "fieldNotes": count(*[_type == "fieldNote" && ${PUBLIC_ENTRY_FILTER}]),
+    "reading": count(*[_type == "readingEntry" && ${PUBLIC_ENTRY_FILTER}]),
+    "experiences": count(*[_type == "experience" && ${PUBLIC_ENTRY_FILTER}]),
+    "updates": count(*[_type == "currentUpdate" && ($preview || active == true)])
+  },
+  "recent": *[_type in ["workItem", "note", "fieldNote", "experience", "readingEntry"] && ${PUBLIC_ENTRY_FILTER}]
+    | order(coalesce(publishedAt, _createdAt) desc) [0...5] {
+    _id,
+    _type,
+    title,
+    "slug": slug.current,
+    date,
+    dateRead,
+    dateVisited,
+    dateRange,
+    primaryCategory,
+    noteType,
+    locationName,
+    country,
+    author,
+    organisation,
+    "experienceType": type
+  },
+  "settings": *[_type == "siteSettings"][0]{
+    contactLinks,
+    socialLinks,
+    cvFile{title, "url": file.asset->url}
+  }
+}`)
+
 // ─────────────────────────────────────────────────────────────────────
 // Result types — manual, matching the pattern the /work/[slug] page
 // established. Every field a query can return as missing is nullable.
@@ -284,3 +323,22 @@ export type ArchiveFragment = {
   organisation: string | null
   experienceType: string | null
 }
+
+export type IndexCounts = {
+  work: number
+  notes: number
+  fieldNotes: number
+  reading: number
+  experiences: number
+  updates: number
+}
+
+export type IndexPayload = {
+  counts: IndexCounts
+  recent: ArchiveFragment[]
+  settings: {
+    contactLinks: ExternalLinkValue[] | null
+    socialLinks: ExternalLinkValue[] | null
+    cvFile: { title: string | null; url: string | null } | null
+  } | null
+} | null
