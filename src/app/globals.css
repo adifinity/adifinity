@@ -121,24 +121,54 @@
 }
 
 /*
-  Ledger Sort pre-paint hold. The inline arrival script sets
-  data-ledger="pending" on <html> — synchronously, before first paint,
-  and only when the signature sequence will actually play (eligible
-  content, motion allowed, first arrival this tab session). While
-  pending, the participants wait at opacity 0 so the first visible
-  frame is the ledger index, never a settled flash. The animation
-  controller (or the script's own 2.5s failsafe, or no JavaScript at
-  all) returns the page to its fully visible settled state.
+  Ledger Sort pre-paint hold — server-rendered, script-free.
+
+  The homepage renders data-ledger-stage on its opening section only
+  when the signature sequence is eligible (featured entry + enough
+  fragments), so every rule here is inert on every other route and on
+  ineligible or public homepages. Held participants wait at opacity 0
+  from the first paint — never a settled flash, never a backward jump.
+
+  Three independent ways out, all toward the settled page:
+  1. The ledger-reveal keyframe is a pure-CSS failsafe clock: 2.5s
+     after paint the settled page appears even if every script failed
+     (including with JavaScript disabled).
+  2. html[data-ledger='reveal'] — stamped by the pre-hydration arrival
+     gate (already-seen sessions, reduced motion, non-home documents)
+     or by the animation controller when it settles or takes over.
+  3. The reduced-motion media block reveals at paint with no script
+     and no measurement at all.
 */
-html[data-ledger='pending'] [data-ledger='fragment'],
-html[data-ledger='pending'] [data-ledger='now'],
-html[data-ledger='pending'] [data-ledger='fragments-head'],
-html[data-ledger='pending'] article[data-ledger='article'] > *,
-html[data-ledger='armed'] [data-ledger='fragment'],
-html[data-ledger='armed'] [data-ledger='now'],
-html[data-ledger='armed'] [data-ledger='fragments-head'],
-html[data-ledger='armed'] article[data-ledger='article'] > * {
+@keyframes ledger-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+section[data-ledger-stage] [data-ledger='fragment'],
+section[data-ledger-stage] [data-ledger='now'],
+section[data-ledger-stage] [data-ledger='fragments-head'],
+section[data-ledger-stage] article[data-ledger='article'] > * {
   opacity: 0;
+  animation: ledger-reveal 0s linear 2.5s forwards;
+}
+
+html[data-ledger='reveal'] section[data-ledger-stage] [data-ledger='fragment'],
+html[data-ledger='reveal'] section[data-ledger-stage] [data-ledger='now'],
+html[data-ledger='reveal'] section[data-ledger-stage] [data-ledger='fragments-head'],
+html[data-ledger='reveal'] section[data-ledger-stage] article[data-ledger='article'] > * {
+  opacity: 1;
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  section[data-ledger-stage] [data-ledger='fragment'],
+  section[data-ledger-stage] [data-ledger='now'],
+  section[data-ledger-stage] [data-ledger='fragments-head'],
+  section[data-ledger-stage] article[data-ledger='article'] > * {
+    opacity: 1;
+    animation: none;
+  }
 }
 
 /*

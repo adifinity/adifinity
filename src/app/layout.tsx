@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 
+import Script from "next/script";
+
+import { LEDGER_GATE_SCRIPT } from "@/lib/ledger-gate";
 import { IDENTITY_LINE, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site-copy";
 
 const newsreader = Newsreader({
@@ -57,14 +60,21 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      // The Ledger Sort arrival script may stamp data-ledger on <html>
-      // before hydration (the standard pre-paint pattern, as used by
-      // theme scripts). Suppress the attribute-only hydration diff for
-      // this element; children are still fully checked.
+      // Covers exactly one intentional pre-hydration difference: the
+      // ledger-gate beforeInteractive script stamps data-ledger on
+      // <html> before React hydrates (the same pattern theme scripts
+      // use). Attribute diffs on this element only; children are still
+      // fully checked.
       suppressHydrationWarning
       className={`${newsreader.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink">{children}</body>
+      <body className="min-h-full flex flex-col bg-paper text-ink">
+        {/* Ledger Sort arrival gate — see src/lib/ledger-gate.ts. */}
+        <Script id="ledger-gate" strategy="beforeInteractive">
+          {LEDGER_GATE_SCRIPT}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }

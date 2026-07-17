@@ -6,6 +6,7 @@ import { useLayoutEffect } from 'react'
 // or low-power tabs) nor touch the main thread while in flight.
 import { animate } from 'motion/mini'
 
+import { LEDGER_SESSION_KEY } from '@/lib/ledger-gate'
 import { EASE_SETTLE } from '@/lib/motion-tokens'
 
 // The Ledger Sort — the homepage's one deliberately spectacular
@@ -19,9 +20,10 @@ import { EASE_SETTLE } from '@/lib/motion-tokens'
 // throttled background tabs), then clears every inline style it set.
 // The semantic DOM, reading order, and focus order never change.
 //
-// It only acts when the arrival script (ledger-script.tsx) marked the
-// document with data-ledger="pending" — which already encodes the
-// eligibility, reduced-motion, and once-per-session decisions.
+// It only acts when the arrival gate (ledger-gate.tsx) stamped this
+// document with data-ledger="pending" before hydration. Taking
+// ownership of that arrival is what commits the once-per-tab-session
+// flag — so only an eligible homepage document ever consumes it.
 
 // Timing (seconds) — Stage 4 motion language: settle and ink.
 const HOLD = 0.22 // the index is readable before anything moves
@@ -37,8 +39,23 @@ const LEDGER_TEXT_PX = 17 // the featured line's visual size in the index
 export function LedgerSort() {
   useLayoutEffect(() => {
     const html = document.documentElement
-    if (html.getAttribute('data-ledger') !== 'pending') return
-    const reveal = () => html.removeAttribute('data-ledger')
+    // 'reveal' disarms the server-rendered CSS hold and its failsafe
+    // clock in one move — every exit path leads here.
+    const reveal = () => html.setAttribute('data-ledger', 'reveal')
+    if (html.getAttribute('data-ledger') !== 'pending') {
+      // Not this island's arrival: already played this session,
+      // revealed by the gate, or mounted via client navigation into a
+      // non-pending document. Ensure the page is visible; stand down.
+      reveal()
+      return
+    }
+    // Take ownership of the arrival — this, and only this, commits the
+    // once-per-tab-session flag.
+    try {
+      sessionStorage.setItem(LEDGER_SESSION_KEY, '1')
+    } catch {
+      /* storage unavailable — the signature may simply play again */
+    }
 
     const title = document.getElementById('featured-title')
     const article = title?.closest('article') ?? null
@@ -165,8 +182,9 @@ export function LedgerSort() {
         el.style.opacity = '0'
         el.style.pointerEvents = 'none'
       }
-      // Inline styles are now authoritative — drop the CSS hold in the
-      // same pre-paint frame so the first visible frame is the index.
+      // Inline styles are now authoritative — stamping 'reveal' in the
+      // same pre-paint frame disarms the CSS hold and its failsafe
+      // clock, so the first visible frame is the index.
       reveal()
 
       const ease = EASE_SETTLE as unknown as [number, number, number, number]
@@ -245,17 +263,17 @@ export function LedgerSort() {
     const onFirstVisible = () => {
       if (document.visibilityState !== 'visible') return
       document.removeEventListener('visibilitychange', onFirstVisible)
-      const state = html.getAttribute('data-ledger')
-      if (state === 'pending' || state === 'armed') startWhenReady()
+      if (html.getAttribute('data-ledger') === 'pending') startWhenReady()
       else settle()
     }
 
     addListeners()
     if (document.visibilityState === 'hidden') {
-      // Take ownership from the script's 2.5s failsafe (which only
-      // clears 'pending'): this island is alive and will play — or
-      // reveal — on the tab's first visible moment.
-      html.setAttribute('data-ledger', 'armed')
+      // A tab arriving in the background has no reliable animation
+      // clock — keep the arrival pending and play on the first visible
+      // moment. If the pure-CSS failsafe reveals meanwhile, it does so
+      // unobserved in a hidden tab; run() stamps 'reveal', which
+      // disarms that failsafe before its inline styles take over.
       document.addEventListener('visibilitychange', onFirstVisible)
     } else {
       startWhenReady()

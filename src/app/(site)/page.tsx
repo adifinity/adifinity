@@ -7,7 +7,6 @@ import { ArchiveFragments } from '@/components/archive-fragments'
 import { EmptyNote } from '@/components/empty-note'
 import { FeaturedEntry } from '@/components/featured-entry'
 import { LatestUpdate } from '@/components/latest-update'
-import { LedgerScript } from '@/components/ledger-script'
 import { LedgerSort } from '@/components/ledger-sort'
 import { SectionHeading } from '@/components/section-heading'
 import { WorkRow } from '@/components/work-row'
@@ -64,16 +63,19 @@ export default async function Home() {
 
   // Minimum viable data for the Ledger Sort signature: a Featured
   // Current Entry plus at least two real archive fragments. Anything
-  // less renders the plain settled page — no arrival script, no
-  // animation island, nothing hidden at first paint.
+  // less renders the plain settled page — no stage marker, no animation
+  // island, nothing ever hidden.
   const ledgerEligible = featured !== null && fragments.length >= 2
 
   return (
     <div className="mx-auto max-w-7xl px-6">
-      {ledgerEligible && <LedgerScript />}
-      {/* Opening — identity, Featured Current Entry, margin rail */}
+      {/* Opening — identity, Featured Current Entry, margin rail.
+          data-ledger-stage (eligible pages only) scopes the CSS that
+          holds the Ledger Sort participants until the arrival gate and
+          controller decide — or the pure-CSS failsafe reveals. */}
       <section
         aria-labelledby="identity-line"
+        data-ledger-stage={ledgerEligible ? '' : undefined}
         className="grid gap-12 py-16 lg:grid-cols-12 lg:gap-8 lg:py-20"
       >
         <div className="lg:col-span-8">
