@@ -121,6 +121,27 @@
 }
 
 /*
+  Ledger Sort pre-paint hold. The inline arrival script sets
+  data-ledger="pending" on <html> — synchronously, before first paint,
+  and only when the signature sequence will actually play (eligible
+  content, motion allowed, first arrival this tab session). While
+  pending, the participants wait at opacity 0 so the first visible
+  frame is the ledger index, never a settled flash. The animation
+  controller (or the script's own 2.5s failsafe, or no JavaScript at
+  all) returns the page to its fully visible settled state.
+*/
+html[data-ledger='pending'] [data-ledger='fragment'],
+html[data-ledger='pending'] [data-ledger='now'],
+html[data-ledger='pending'] [data-ledger='fragments-head'],
+html[data-ledger='pending'] article[data-ledger='article'] > *,
+html[data-ledger='armed'] [data-ledger='fragment'],
+html[data-ledger='armed'] [data-ledger='now'],
+html[data-ledger='armed'] [data-ledger='fragments-head'],
+html[data-ledger='armed'] article[data-ledger='article'] > * {
+  opacity: 0;
+}
+
+/*
   Reduced motion: state changes still happen (color, underline,
   visibility) — only their movement and duration are removed.
 */

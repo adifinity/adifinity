@@ -44,7 +44,11 @@ export function FeaturedEntry({ entry }: { entry: FeaturedEntryPayload | null })
   const href = type === 'workItem' && slug ? `/work/${slug}` : null
 
   return (
-    <article aria-labelledby="featured-title" className="mt-10 border-t border-rule pt-8">
+    <article
+      aria-labelledby="featured-title"
+      data-ledger="article"
+      className="mt-10 border-t border-rule pt-8"
+    >
       <p className="font-mono text-meta uppercase text-annotation">Currently</p>
       <h2 id="featured-title" className="mt-4 max-w-[20ch] font-serif text-display text-ink">
         {entry.title}

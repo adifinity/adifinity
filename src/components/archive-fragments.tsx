@@ -9,11 +9,17 @@ import type { ArchiveFragment } from '@/sanity/lib/queries'
 export function ArchiveFragments({ fragments }: { fragments: ArchiveFragment[] }) {
   return (
     <div className="border-t border-rule pt-4">
-      <h2 className="font-mono text-meta uppercase text-graphite">From the archive</h2>
+      <h2 data-ledger="fragments-head" className="font-mono text-meta uppercase text-graphite">
+        From the archive
+      </h2>
       {fragments.length > 0 ? (
         <ul className="mt-1">
           {fragments.map((fragment) => (
-            <li key={fragment._id} className="border-b border-rule py-3 last:border-b-0">
+            <li
+              key={fragment._id}
+              data-ledger="fragment"
+              className="border-b border-rule py-3 last:border-b-0"
+            >
               <p className="font-serif text-caption text-ink">{fragment.title}</p>
               <p className="mt-1 font-mono text-meta uppercase text-graphite">
                 {catalogLabel(fragment)}

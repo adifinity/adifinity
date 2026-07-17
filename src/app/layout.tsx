@@ -57,6 +57,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      // The Ledger Sort arrival script may stamp data-ledger on <html>
+      // before hydration (the standard pre-paint pattern, as used by
+      // theme scripts). Suppress the attribute-only hydration diff for
+      // this element; children are still fully checked.
+      suppressHydrationWarning
       className={`${newsreader.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-paper text-ink">{children}</body>

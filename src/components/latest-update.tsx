@@ -8,7 +8,7 @@ import type { LatestUpdatePayload } from '@/sanity/lib/queries'
 // no link at all.
 export function LatestUpdate({ update }: { update: LatestUpdatePayload }) {
   return (
-    <div className="border-t border-rule pt-4">
+    <div data-ledger="now" className="border-t border-rule pt-4">
       <h2 className="font-mono text-meta uppercase text-annotation">Now</h2>
       {update ? (
         <>

@@ -7,6 +7,8 @@ import { ArchiveFragments } from '@/components/archive-fragments'
 import { EmptyNote } from '@/components/empty-note'
 import { FeaturedEntry } from '@/components/featured-entry'
 import { LatestUpdate } from '@/components/latest-update'
+import { LedgerScript } from '@/components/ledger-script'
+import { LedgerSort } from '@/components/ledger-sort'
 import { SectionHeading } from '@/components/section-heading'
 import { WorkRow } from '@/components/work-row'
 import { clean, formatDate, noteTypeLabel, yearOf } from '@/lib/entry-meta'
@@ -60,8 +62,15 @@ export default async function Home() {
   const contactLinks = [...(settings?.contactLinks ?? []), ...(settings?.socialLinks ?? [])]
   const isDraftMode = (await draftMode()).isEnabled
 
+  // Minimum viable data for the Ledger Sort signature: a Featured
+  // Current Entry plus at least two real archive fragments. Anything
+  // less renders the plain settled page — no arrival script, no
+  // animation island, nothing hidden at first paint.
+  const ledgerEligible = featured !== null && fragments.length >= 2
+
   return (
     <div className="mx-auto max-w-7xl px-6">
+      {ledgerEligible && <LedgerScript />}
       {/* Opening — identity, Featured Current Entry, margin rail */}
       <section
         aria-labelledby="identity-line"
@@ -271,6 +280,7 @@ export default async function Home() {
         )}
       </section>
 
+      {ledgerEligible && <LedgerSort />}
       <SanityLive />
       {isDraftMode && (
         <>
