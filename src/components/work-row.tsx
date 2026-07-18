@@ -28,6 +28,13 @@ export function WorkRow({ item }: { item: FeaturedWorkItem }) {
         {item.summary && (
           <p className="mt-3 max-w-[58ch] font-serif text-body text-graphite">{item.summary}</p>
         )}
+        {(item.institutionOrClient || item.role) && (
+          <p className="mt-3 font-sans text-caption text-graphite">
+            {item.institutionOrClient}
+            {item.institutionOrClient && item.role && ' · '}
+            {item.role}
+          </p>
+        )}
         {slug && (
           <p className="mt-4 font-sans text-caption text-graphite transition-colors group-hover:text-annotation">
             Read the entry<span aria-hidden="true"> →</span>

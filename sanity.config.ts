@@ -77,6 +77,7 @@ export default defineConfig({
                   title: doc?.title || 'Untitled work item',
                   href: doc?.slug ? `/work/${doc.slug}` : '/work',
                 },
+                {title: 'Work index', href: '/work'},
               ],
             }),
           }),

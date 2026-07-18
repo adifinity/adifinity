@@ -193,6 +193,126 @@ export const INDEX_QUERY = defineQuery(`{
 }`)
 
 // ─────────────────────────────────────────────────────────────────────
+// Work — the curated gallery of the archive.
+//
+// Curation rule: siteSettings.featuredWork drives the homepage
+// selection; workItem.featuredOrder drives inclusion and order on the
+// public /work page; the future Archive will hold the complete body of
+// work. Entries need a defined featuredOrder AND must pass the shared
+// editorial gate. Order: editorial priority, then most recent start
+// date, then title as a deterministic tie-break.
+// ─────────────────────────────────────────────────────────────────────
+export const WORK_INDEX_QUERY = defineQuery(`
+  *[_type == "workItem" && defined(featuredOrder) && ${PUBLIC_ENTRY_FILTER}]
+    | order(featuredOrder asc, coalesce(dateRange.startDate, publishedAt, _createdAt) desc, title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    status,
+    visibility,
+    phase,
+    primaryCategory,
+    secondaryThemes,
+    dateRange,
+    coverMedia,
+    featuredOrder,
+    role,
+    institutionOrClient
+  }
+`)
+
+// Portable-text image blocks are enriched with their intrinsic
+// dimensions so diagrams and document pages can render uncropped.
+const PROSE_PROJECTION = /* groq */ `[]{
+    ...,
+    _type == "imageWithMetadata" => {
+      ...,
+      "dims": asset->metadata.dimensions{width, height}
+    }
+  }`
+
+const FILE_PROJECTION = /* groq */ `{
+    title,
+    description,
+    "url": file.asset->url,
+    "extension": file.asset->extension,
+    "size": file.asset->size
+  }`
+
+// The definitive Work entry. Every field is real schema; related
+// entries are dereferenced through the same editorial gate (capability
+// has no status/visibility — its gate is its own active flag).
+export const WORK_DETAIL_QUERY = defineQuery(`
+  *[_type == "workItem" && slug.current == $slug && ${PUBLIC_ENTRY_FILTER}][0]{
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    status,
+    visibility,
+    phase,
+    publishedAt,
+    updatedAt,
+    dateRange,
+    primaryCategory,
+    secondaryThemes,
+    role,
+    collaborators,
+    institutionOrClient,
+    confidentialityNote,
+    credits,
+    methods,
+    "body": body${PROSE_PROJECTION},
+    "problem": problem${PROSE_PROJECTION},
+    "approach": approach${PROSE_PROJECTION},
+    "outcome": outcome${PROSE_PROJECTION},
+    "evidence": evidence{
+      "narrative": narrative${PROSE_PROJECTION},
+      "files": files[]${FILE_PROJECTION}
+    },
+    coverMedia,
+    "gallery": gallery[]{
+      ...,
+      "dims": asset->metadata.dimensions{width, height}
+    },
+    "externalLinks": externalLinks[]{label, url},
+    "downloadableFiles": downloadableFiles[]${FILE_PROJECTION},
+    "relatedEntries": relatedEntries[]->{
+      _id,
+      _type,
+      title,
+      "slug": slug.current,
+      summary,
+      description,
+      date,
+      dateRead,
+      dateVisited,
+      dateRange,
+      primaryCategory,
+      noteType,
+      locationName,
+      country,
+      author,
+      organisation,
+      roleTitle,
+      "experienceType": type,
+      "capabilityName": name,
+      "capabilityPhase": phase
+    }[defined(_id) && ($preview || (_type == "capability" && active == true) || (status == "published" && visibility == "public"))]
+  }
+`)
+
+// Route metadata only — kept separate so generateMetadata stays light.
+export const WORK_META_QUERY = defineQuery(`
+  *[_type == "workItem" && slug.current == $slug && ${PUBLIC_ENTRY_FILTER}][0]{
+    title,
+    summary,
+    seo{seoTitle, seoDescription, socialPreviewImage}
+  }
+`)
+
+// ─────────────────────────────────────────────────────────────────────
 // Result types — manual, matching the pattern the /work/[slug] page
 // established. Every field a query can return as missing is nullable.
 // ─────────────────────────────────────────────────────────────────────
@@ -322,6 +442,87 @@ export type ArchiveFragment = {
   author: string | null
   organisation: string | null
   experienceType: string | null
+}
+
+export type FileAssetInfo = {
+  title: string | null
+  description: string | null
+  url: string | null
+  extension: string | null
+  size: number | null
+}
+
+export type ProseImageDims = { width: number; height: number }
+
+export type GalleryImage = SanityImageValue & {
+  dims: ProseImageDims | null
+}
+
+export type RelatedEntry = {
+  _id: string
+  _type: 'workItem' | 'note' | 'fieldNote' | 'experience' | 'readingEntry' | 'capability'
+  title: string | null
+  slug: string | null
+  summary: string | null
+  description: string | null
+  date: string | null
+  dateRead: string | null
+  dateVisited: string | null
+  dateRange: DateRangeValue | null
+  primaryCategory: string | null
+  noteType: string | null
+  locationName: string | null
+  country: string | null
+  author: string | null
+  organisation: string | null
+  roleTitle: string | null
+  experienceType: string | null
+  capabilityName: string | null
+  capabilityPhase: string | null
+}
+
+export type WorkDetailPayload = {
+  _id: string
+  title: string | null
+  slug: string | null
+  summary: string | null
+  status: string | null
+  visibility: string | null
+  phase: string | null
+  publishedAt: string | null
+  updatedAt: string | null
+  dateRange: DateRangeValue | null
+  primaryCategory: string | null
+  secondaryThemes: string[] | null
+  role: string | null
+  collaborators: string[] | null
+  institutionOrClient: string | null
+  confidentialityNote: string | null
+  credits: string | null
+  methods: string[] | null
+  body: PortableTextBlock[] | null
+  problem: PortableTextBlock[] | null
+  approach: PortableTextBlock[] | null
+  outcome: PortableTextBlock[] | null
+  evidence: {
+    narrative: PortableTextBlock[] | null
+    files: FileAssetInfo[] | null
+  } | null
+  coverMedia: SanityImageValue | null
+  gallery: GalleryImage[] | null
+  externalLinks: ExternalLinkValue[] | null
+  downloadableFiles: FileAssetInfo[] | null
+  relatedEntries: RelatedEntry[] | null
+}
+
+export type WorkMetaPayload = {
+  title: string | null
+  summary: string | null
+  seo: {
+    seoTitle: string | null
+    seoDescription: string | null
+    socialPreviewImage: SanityImageValue | null
+  } | null
 }
 
 export type IndexCounts = {
