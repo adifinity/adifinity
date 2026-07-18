@@ -81,6 +81,64 @@ export default defineConfig({
               ],
             }),
           }),
+          note: defineLocations({
+            select: {title: 'title', slug: 'slug.current'},
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled note',
+                  href: doc?.slug ? `/notes/${doc.slug}` : '/notes',
+                },
+                {title: 'Notes index', href: '/notes'},
+              ],
+            }),
+          }),
+          fieldNote: defineLocations({
+            select: {title: 'title', slug: 'slug.current'},
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled field note',
+                  href: doc?.slug ? `/field-notes/${doc.slug}` : '/field-notes',
+                },
+                {title: 'Field Notes index', href: '/field-notes'},
+              ],
+            }),
+          }),
+          currentUpdate: defineLocations({
+            select: {title: 'title'},
+            resolve: (doc) => ({
+              locations: [
+                {title: doc?.title || 'Current update', href: '/now'},
+                {title: 'Homepage (latest update)', href: '/'},
+              ],
+            }),
+          }),
+          experience: defineLocations({
+            select: {title: 'title'},
+            resolve: (doc) => ({
+              locations: [
+                {title: doc?.title || 'Experience', href: '/story'},
+                {title: 'Archive', href: '/archive'},
+              ],
+            }),
+          }),
+          readingEntry: defineLocations({
+            select: {title: 'title'},
+            resolve: (doc) => ({
+              locations: [
+                {title: doc?.title || 'Reading entry', href: '/archive'},
+              ],
+            }),
+          }),
+          capability: defineLocations({
+            select: {name: 'name'},
+            resolve: (doc) => ({
+              locations: [
+                {title: doc?.name || 'Capability', href: '/story'},
+              ],
+            }),
+          }),
         },
       },
     }),

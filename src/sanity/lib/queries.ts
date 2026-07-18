@@ -240,6 +240,32 @@ const FILE_PROJECTION = /* groq */ `{
     "size": file.asset->size
   }`
 
+// Authored cross-references, dereferenced through the same editorial
+// gate (capability has no status/visibility — its gate is its own
+// active flag). Shared by every detail page that carries marginalia.
+const RELATED_ENTRIES_PROJECTION = /* groq */ `relatedEntries[]->{
+      _id,
+      _type,
+      title,
+      "slug": slug.current,
+      summary,
+      description,
+      date,
+      dateRead,
+      dateVisited,
+      dateRange,
+      primaryCategory,
+      noteType,
+      locationName,
+      country,
+      author,
+      organisation,
+      roleTitle,
+      "experienceType": type,
+      "capabilityName": name,
+      "capabilityPhase": phase
+    }[defined(_id) && ($preview || (_type == "capability" && active == true) || (status == "published" && visibility == "public"))]`
+
 // The definitive Work entry. Every field is real schema; related
 // entries are dereferenced through the same editorial gate (capability
 // has no status/visibility — its gate is its own active flag).
@@ -278,28 +304,7 @@ export const WORK_DETAIL_QUERY = defineQuery(`
     },
     "externalLinks": externalLinks[]{label, url},
     "downloadableFiles": downloadableFiles[]${FILE_PROJECTION},
-    "relatedEntries": relatedEntries[]->{
-      _id,
-      _type,
-      title,
-      "slug": slug.current,
-      summary,
-      description,
-      date,
-      dateRead,
-      dateVisited,
-      dateRange,
-      primaryCategory,
-      noteType,
-      locationName,
-      country,
-      author,
-      organisation,
-      roleTitle,
-      "experienceType": type,
-      "capabilityName": name,
-      "capabilityPhase": phase
-    }[defined(_id) && ($preview || (_type == "capability" && active == true) || (status == "published" && visibility == "public"))]
+    "relatedEntries": ${RELATED_ENTRIES_PROJECTION}
   }
 `)
 
@@ -309,6 +314,186 @@ export const WORK_META_QUERY = defineQuery(`
     title,
     summary,
     seo{seoTitle, seoDescription, socialPreviewImage}
+  }
+`)
+
+// Shared detail-page metadata for the sluggable content types.
+export const ENTRY_META_QUERY = defineQuery(`
+  *[_type == $type && slug.current == $slug && ${PUBLIC_ENTRY_FILTER}][0]{
+    title,
+    summary,
+    seo{seoTitle, seoDescription, socialPreviewImage}
+  }
+`)
+
+// ─────────────────────────────────────────────────────────────────────
+// Story — CMS biography prose with experience chronology in the
+// margins, and the Apparatus (capabilities with gated work examples).
+// ─────────────────────────────────────────────────────────────────────
+export const STORY_QUERY = defineQuery(`{
+  "settings": *[_type == "siteSettings"][0]{
+    shortBio,
+    "longBio": longBio${PROSE_PROJECTION},
+    "heroCopy": heroCopy${PROSE_PROJECTION},
+    profileImage
+  },
+  "experiences": *[_type == "experience" && ${PUBLIC_ENTRY_FILTER}]
+    | order(coalesce(dateRange.startDate, _createdAt) desc) {
+    _id,
+    title,
+    organisation,
+    roleTitle,
+    summary,
+    dateRange,
+    phase,
+    "experienceType": type,
+    verifiedFacts
+  },
+  "capabilities": *[_type == "capability" && ($preview || active == true)]
+    | order(coalesce(displayOrder, 999) asc, name asc) {
+    _id,
+    name,
+    description,
+    "capabilityPhase": phase,
+    "examples": linkedExamples[]->{
+      title,
+      "slug": slug.current
+    }[defined(_id) && ($preview || (status == "published" && visibility == "public"))]
+  }
+}`)
+
+// ─────────────────────────────────────────────────────────────────────
+// Now — the living working ledger. Ordered by editorial priority, then
+// date; the homepage's Latest Update remains its own computed concept.
+// ─────────────────────────────────────────────────────────────────────
+export const NOW_QUERY = defineQuery(`
+  *[_type == "currentUpdate" && ($preview || active == true)]
+    | order(coalesce(priority, 999) asc, coalesce(date, "0000") desc) {
+    _id,
+    title,
+    description,
+    date,
+    label,
+    priority,
+    active
+  }
+`)
+
+// ─────────────────────────────────────────────────────────────────────
+// Notes — the light, immediate layer of the archive.
+// ─────────────────────────────────────────────────────────────────────
+export const NOTES_INDEX_QUERY = defineQuery(`
+  *[_type == "note" && ${PUBLIC_ENTRY_FILTER}]
+    | order(date desc, _createdAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    noteType,
+    date,
+    estimatedReadingTime
+  }
+`)
+
+export const NOTE_DETAIL_QUERY = defineQuery(`
+  *[_type == "note" && slug.current == $slug && ${PUBLIC_ENTRY_FILTER}][0]{
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    noteType,
+    date,
+    estimatedReadingTime,
+    coverMedia,
+    "body": body${PROSE_PROJECTION},
+    "relatedEntries": ${RELATED_ENTRIES_PROJECTION}
+  }
+`)
+
+// ─────────────────────────────────────────────────────────────────────
+// Field Notes — evidence collected from places.
+// ─────────────────────────────────────────────────────────────────────
+export const FIELD_NOTES_INDEX_QUERY = defineQuery(`
+  *[_type == "fieldNote" && ${PUBLIC_ENTRY_FILTER}]
+    | order(coalesce(dateVisited, date) desc, _createdAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    locationName,
+    country,
+    date,
+    dateVisited,
+    observation
+  }
+`)
+
+export const FIELD_NOTE_DETAIL_QUERY = defineQuery(`
+  *[_type == "fieldNote" && slug.current == $slug && ${PUBLIC_ENTRY_FILTER}][0]{
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    locationName,
+    country,
+    date,
+    dateVisited,
+    observation,
+    mapLabel,
+    "coordinates": coordinates{lat, lng},
+    coverMedia,
+    "photoGallery": photoGallery[]{
+      ...,
+      "dims": asset->metadata.dimensions{width, height}
+    },
+    "body": body${PROSE_PROJECTION},
+    "relatedEntries": ${RELATED_ENTRIES_PROJECTION}
+  }
+`)
+
+// ─────────────────────────────────────────────────────────────────────
+// Archive — the complete catalogue: every filed entry of the five
+// long-term types, with a unified sort date and the fields the
+// filterable index needs. currentUpdate and capability are excluded by
+// design (ephemeral "now" content; connective data).
+// ─────────────────────────────────────────────────────────────────────
+export const ARCHIVE_QUERY = defineQuery(`
+  *[_type in ["workItem", "note", "fieldNote", "experience", "readingEntry"] && ${PUBLIC_ENTRY_FILTER}]
+    | order(coalesce(dateRange.startDate, dateVisited, date, dateRead, publishedAt, _createdAt) desc, title asc) {
+    _id,
+    _type,
+    title,
+    "slug": slug.current,
+    summary,
+    date,
+    dateRead,
+    dateVisited,
+    dateRange,
+    primaryCategory,
+    secondaryThemes,
+    methods,
+    genreOrTheme,
+    noteType,
+    locationName,
+    country,
+    author,
+    highlightOrIdea,
+    organisation,
+    roleTitle,
+    "experienceType": type,
+    "sortDate": coalesce(dateRange.startDate, dateVisited, date, dateRead, publishedAt, _createdAt)
+  }
+`)
+
+// ─────────────────────────────────────────────────────────────────────
+// Contact — correspondence details from Site Settings.
+// ─────────────────────────────────────────────────────────────────────
+export const CONTACT_QUERY = defineQuery(`
+  *[_type == "siteSettings"][0]{
+    shortBio,
+    contactLinks,
+    socialLinks,
+    cvFile{title, description, "url": file.asset->url, "extension": file.asset->extension, "size": file.asset->size}
   }
 `)
 
@@ -524,6 +709,110 @@ export type WorkMetaPayload = {
     socialPreviewImage: SanityImageValue | null
   } | null
 }
+
+export type StoryExperience = {
+  _id: string
+  title: string | null
+  organisation: string | null
+  roleTitle: string | null
+  summary: string | null
+  dateRange: DateRangeValue | null
+  phase: string | null
+  experienceType: string | null
+  verifiedFacts: string[] | null
+}
+
+export type StoryCapability = {
+  _id: string
+  name: string | null
+  description: string | null
+  capabilityPhase: string | null
+  examples: { title: string | null; slug: string | null }[] | null
+}
+
+export type StoryPayload = {
+  settings: {
+    shortBio: string | null
+    longBio: PortableTextBlock[] | null
+    heroCopy: PortableTextBlock[] | null
+    profileImage: SanityImageValue | null
+  } | null
+  experiences: StoryExperience[]
+  capabilities: StoryCapability[]
+} | null
+
+export type NowUpdate = {
+  _id: string
+  title: string | null
+  description: string | null
+  date: string | null
+  label: string | null
+  priority: number | null
+  active: boolean | null
+}
+
+export type NoteDetailPayload = {
+  _id: string
+  title: string | null
+  slug: string | null
+  summary: string | null
+  noteType: string | null
+  date: string | null
+  estimatedReadingTime: number | null
+  coverMedia: SanityImageValue | null
+  body: PortableTextBlock[] | null
+  relatedEntries: RelatedEntry[] | null
+}
+
+export type FieldNoteDetailPayload = {
+  _id: string
+  title: string | null
+  slug: string | null
+  summary: string | null
+  locationName: string | null
+  country: string | null
+  date: string | null
+  dateVisited: string | null
+  observation: string | null
+  mapLabel: string | null
+  coordinates: { lat: number | null; lng: number | null } | null
+  coverMedia: SanityImageValue | null
+  photoGallery: GalleryImage[] | null
+  body: PortableTextBlock[] | null
+  relatedEntries: RelatedEntry[] | null
+}
+
+export type ArchiveEntry = {
+  _id: string
+  _type: 'workItem' | 'note' | 'fieldNote' | 'experience' | 'readingEntry'
+  title: string | null
+  slug: string | null
+  summary: string | null
+  date: string | null
+  dateRead: string | null
+  dateVisited: string | null
+  dateRange: DateRangeValue | null
+  primaryCategory: string | null
+  secondaryThemes: string[] | null
+  methods: string[] | null
+  genreOrTheme: string[] | null
+  noteType: string | null
+  locationName: string | null
+  country: string | null
+  author: string | null
+  highlightOrIdea: string | null
+  organisation: string | null
+  roleTitle: string | null
+  experienceType: string | null
+  sortDate: string | null
+}
+
+export type ContactPayload = {
+  shortBio: string | null
+  contactLinks: ExternalLinkValue[] | null
+  socialLinks: ExternalLinkValue[] | null
+  cvFile: FileAssetInfo | null
+} | null
 
 export type IndexCounts = {
   work: number

@@ -7,9 +7,9 @@ import type { ArchiveFragment, RelatedEntry } from '@/sanity/lib/queries'
 // Related entries as authored marginalia — cross-references in the
 // margin's voice, not a "related posts" grid. Each reference carries an
 // editorial lead-in chosen by type, the entry's title, and its catalog
-// context. Only workItem currently has a public route; every other type
-// renders as a non-clickable contextual reference until its section of
-// the archive opens. Capability stays connective: a restrained label
+// context. workItem, note and fieldNote link to their public routes;
+// readingEntry and experience are contextual records (no standalone
+// pages by design), and capability stays connective: a restrained label
 // with its honest Current/Emerging state, never a destination.
 
 const LEAD_INS: Record<RelatedEntry['_type'], string> = {
@@ -19,6 +19,12 @@ const LEAD_INS: Record<RelatedEntry['_type'], string> = {
   readingEntry: 'read alongside—',
   experience: 'the institution behind this—',
   capability: 'capability exercised—',
+}
+
+const ROUTE_BASE: Partial<Record<RelatedEntry['_type'], string>> = {
+  workItem: '/work',
+  note: '/notes',
+  fieldNote: '/field-notes',
 }
 
 function contextLine(entry: RelatedEntry): string {
@@ -45,7 +51,8 @@ export function RelatedEntries({ entries }: { entries: RelatedEntry[] | null | u
         {usable.map((entry) => {
           const type = stegaClean(entry._type)
           const slug = clean(entry.slug)
-          const href = type === 'workItem' && slug ? `/work/${slug}` : null
+          const base = ROUTE_BASE[type as RelatedEntry['_type']]
+          const href = base && slug ? `${base}/${slug}` : null
           const title = type === 'capability' ? entry.capabilityName : entry.title
           const body = (
             <>
