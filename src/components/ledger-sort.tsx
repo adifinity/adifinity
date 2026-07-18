@@ -26,13 +26,38 @@ import { EASE_SETTLE } from '@/lib/motion-tokens'
 // flag — so only an eligible homepage document ever consumes it.
 
 // Timing (seconds) — Stage 4 motion language: settle and ink.
-const HOLD = 0.22 // the index is readable before anything moves
-const RESOLVE_DURATION = 0.48 // fragments travel to their settled places
-const RESOLVE_STAGGER = 0.035
-const EXPAND_DELAY = HOLD + 0.16 // featured line opens after recognition
-const EXPAND_DURATION = 0.5
-const INK_DURATION = 0.3
-const INK_STAGGER = 0.05
+//
+// Two profiles, tuned per phase rather than scaled by a factor. The
+// desktop rail layout gets room to breathe — the visitor must register
+// the opening as a real index, watch it file itself away, and follow
+// the featured line opening. The stacked compact layout (mobile and
+// tablet) keeps the same shape but stays brisk, so the longer vertical
+// travel never feels frantic and entry is never obstructed.
+const TIMING = {
+  desktop: {
+    hold: 0.4, // the index registers as an index before anything moves
+    resolve: 0.55, // entries file away — considered, not snapped
+    resolveStagger: 0.045, // separates lines so each departure reads
+    resolveStaggerCap: 0.22,
+    recognise: 0.22, // the red-marked line holds alone before opening
+    expand: 0.6, // the featured line opens deliberately
+    inkAt: 0.65, // details begin inking while the expansion completes
+    ink: 0.4,
+    inkStagger: 0.05,
+  },
+  compact: {
+    hold: 0.34,
+    resolve: 0.5,
+    resolveStagger: 0.04,
+    resolveStaggerCap: 0.18,
+    recognise: 0.18,
+    expand: 0.55,
+    inkAt: 0.65,
+    ink: 0.35,
+    inkStagger: 0.04,
+  },
+} as const
+
 const LEDGER_GAP = 14 // px between index lines
 const LEDGER_TEXT_PX = 17 // the featured line's visual size in the index
 
@@ -141,6 +166,13 @@ export function LedgerSort() {
     const run = () => {
       if (settled) return
 
+      // The rail layout (lg and up) gets the desktop pacing; the
+      // stacked layout keeps the compact profile.
+      const t = window.matchMedia('(min-width: 1024px)').matches
+        ? TIMING.desktop
+        : TIMING.compact
+      const expandDelay = t.hold + t.recognise
+
       // Single read pass.
       const articleRect = article.getBoundingClientRect()
       const titleFontSize = parseFloat(getComputedStyle(title).fontSize) || 48
@@ -198,10 +230,11 @@ export function LedgerSort() {
           p.el,
           { transform: target },
           {
-            duration: isTitle ? EXPAND_DURATION : RESOLVE_DURATION,
+            duration: isTitle ? t.expand : t.resolve,
             delay: isTitle
-              ? EXPAND_DELAY
-              : HOLD + Math.min(fragmentIndex++ * RESOLVE_STAGGER, 0.2),
+              ? expandDelay
+              : t.hold +
+                Math.min(fragmentIndex++ * t.resolveStagger, t.resolveStaggerCap),
             ease,
           },
         )
@@ -213,17 +246,17 @@ export function LedgerSort() {
         () => {
           if (!settled) title.style.color = ''
         },
-        (EXPAND_DELAY + EXPAND_DURATION * 0.5) * 1000,
+        (expandDelay + t.expand * 0.5) * 1000,
       )
       controls.push({ stop: () => window.clearTimeout(inkFlip) })
 
-      const inkStart = EXPAND_DELAY + EXPAND_DURATION * 0.75
+      const inkStart = expandDelay + t.expand * t.inkAt
       inks.forEach((el, i) => {
         el.style.transform = 'translateY(6px)'
         const control = animate(
           el,
           { opacity: 1, transform: 'translateY(0px)' },
-          { duration: INK_DURATION, delay: inkStart + i * INK_STAGGER, ease },
+          { duration: t.ink, delay: inkStart + i * t.inkStagger, ease },
         )
         controls.push(control)
         finished.push(control.finished ?? Promise.resolve())
@@ -232,8 +265,13 @@ export function LedgerSort() {
       Promise.allSettled(finished).then(settle)
       // Deterministic backstop: whatever happens to the animation
       // clock or its promises, the page is pristine and fully
-      // interactive no later than total duration plus margin.
-      const backstop = window.setTimeout(settle, 1800)
+      // interactive no later than the sequence's own end plus margin.
+      const sequenceEnd = Math.max(
+        t.hold + t.resolveStaggerCap + t.resolve,
+        expandDelay + t.expand,
+        inkStart + (inks.length - 1) * t.inkStagger + t.ink,
+      )
+      const backstop = window.setTimeout(settle, (sequenceEnd + 0.5) * 1000)
       controls.push({ stop: () => window.clearTimeout(backstop) })
     }
 
