@@ -3,9 +3,11 @@
 _Live project tracker for populating the Adifinity archive with real content and
 preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
 
-**Latest activity — Phase 5C (2026-08-06):** approved site-identity copy written
-to the **draft** `siteSettings` (`shortBio`, `longBio`); `heroCopy` left empty.
-Nothing published. See §13.
+**Latest activity — Phase 5D (2026-08-06):** approved site-identity copy is now
+**published** on the `siteSettings` singleton (`shortBio`, `longBio`); `heroCopy`
+stays empty; `featuredCurrentEntry` unchanged (still a **weak, gated** ref to a
+draft workItem). The public identity placeholder is gone; public verification
+passed. See §13.
 
 **Rules live elsewhere — do not duplicate them here:**
 - Field-by-field population rules → [`docs/CONTENT_POPULATION_GUIDE.md`](CONTENT_POPULATION_GUIDE.md)
@@ -131,8 +133,8 @@ Legend — Classification: **PLACEHOLDER** = must be replaced with real content 
 
 | Placeholder doc | Becomes | Needs before it can be real |
 |---|---|---|
-| `siteSettings.shortBio` | Real short bio | ✅ approved (5B) + written to **draft** (5C); publish pending |
-| `siteSettings.longBio` | Real Story prose | ✅ approved (5B) + written to **draft** (5C); publish pending |
+| `siteSettings.shortBio` | Real short bio | ✅ approved (5B) + **published** (5D) — live public |
+| `siteSettings.longBio` | Real Story prose | ✅ approved (5B) + **published** (5D) — live public |
 | flagship workItem `4eb5c9c8…` | **Trust as Collateral** case study | Real title/summary/body + case-study fields (§5 P3) |
 | second workItem `cb911028…` | A genuine 2nd Work entry **or** removed | A real project, or a decision to delete |
 | experience `fcd561ad…` | A real experience | Org name, role, dates, narrative |
@@ -166,8 +168,8 @@ Everything below is either approved copy in the repo or a real signal embedded i
 For each item: **CMS doc · field · why it matters · acceptable source · blocks launch?**
 
 ### P1 — Site identity (highest)
-- [x] **`siteSettings.shortBio`** — homepage h1 identity line. ✅ Approved third-person bio (5B) written to the **draft** (5C). _Publish still pending — placeholder remains public until then._
-- [x] **`siteSettings.longBio`** — Story main prose. ✅ Approved first-person 5-paragraph bio (5B) written to the **draft** (5C). _Publish still pending._
+- [x] **`siteSettings.shortBio`** — homepage h1 identity line. ✅ Approved (5B), written to draft (5C), **published (5D)** — live public.
+- [x] **`siteSettings.longBio`** — Story main prose. ✅ Approved (5B), written to draft (5C), **published (5D)** — live public.
 - [ ] **`siteSettings.heroCopy`** — Story fallback. _Acceptable:_ optional short prose. Blocks launch: no.
 - [ ] **`siteSettings.contactLinks`** — Contact + Index. _Acceptable:_ label + email/URL pairs (e.g. email, LinkedIn). Blocks launch: no (honest empty state).
 - [ ] **`siteSettings.socialLinks`** — Contact "Elsewhere" + Index. _Acceptable:_ label + URL pairs. Blocks launch: no.
@@ -207,7 +209,8 @@ For each item: **CMS doc · field · why it matters · acceptable source · bloc
 ## 6. Required user decisions
 
 - [x] **Short/long bio copy (P1):** RESOLVED (Phase 5B) — approved a third-person homepage `shortBio` and a first-person 5-paragraph Story `longBio` (not the `IDENTITY_LINE` verbatim). Written to the draft in Phase 5C (§13).
-- [ ] **Publish the singleton (P1):** approve **publishing** `siteSettings` so the real bio replaces the public placeholder. The draft copy is ready; until approved, public mode shows the placeholder. _(See §12.)_
+- [x] **Publish the singleton (P1):** RESOLVED (5D) — `siteSettings` published; real bio is live public, placeholder gone.
+- [ ] **`featuredCurrentEntry`:** it is now a **published** field holding a weak ref to the **draft** flagship workItem. Harmless (gated → shows homepage empty state), but a future *Studio* "Publish" of `siteSettings` while the workItem is still a draft could surface a strengthen conflict. Cleanest durable fix: publish/replace the flagship workItem (5E) so the ref can strengthen — or repoint/clear it later. No action needed now.
 - [ ] **Flagship slug:** keep `trust-as-collateral-preview-template`, or rename to e.g. `trust-as-collateral`? (Renaming pre-publication is clean; the design brief says preserve slugs unless there's a clear reason.)
 - [ ] **Second workItem `cb911028…`:** promote to a real entry, or remove later?
 - [ ] **`test-doc-1`:** remove this scratch doc, or leave it (it only shows on the protected `/test-preview`)?
@@ -231,7 +234,7 @@ For each item: **CMS doc · field · why it matters · acceptable source · bloc
 
 | Element | Source | Status |
 |---|---|---|
-| Identity line (h1) | `siteSettings.shortBio` | ⚠️ real copy in **draft** (5C); published doc still placeholder until publish approved |
+| Identity line (h1) | `siteSettings.shortBio` | ✅ **published & live public** (5D) — approved short bio |
 | Featured Current Entry (centre) | `siteSettings.featuredCurrentEntry` | ❌ set only on draft (→ draft workItem); not public |
 | Latest Update ("Now") | newest `active` currentUpdate (auto) | ⚠️ two active placeholders, no dates — would compute but placeholder text |
 | Archive fragments | recent public docs | ❌ none public yet → empty |
@@ -281,7 +284,7 @@ Each completed CMS change is logged in §13.
 ## 12. Launch-blocking vs. optional content
 
 **Hard launch blocker (a defect, not an empty state):**
-- [~] **Published `siteSettings.shortBio` / `longBio` hold placeholder text.** Because the singleton is ungated, this placeholder appears as the homepage h1 and Story prose in **public** mode. **Progress:** approved real copy is now written to the **draft** singleton (Phase 5C, §13). **Remaining:** the blocker clears only when Adi approves **publishing** the singleton. Until then, public mode still shows the placeholder (verified 2026-08-06: no draft copy leaks to public HTML/metadata).
+- [x] **RESOLVED (5D) — Published `siteSettings.shortBio` / `longBio` now hold the approved real copy.** The homepage h1 and Story prose show the real bio in public mode; the placeholder is gone (verified 2026-08-06 in public mode: correct copy renders, both routes 200, no console/hydration errors, no draft leakage, draft workItem still gated out of the featured slot).
 
 **Content-completeness blockers (site is technically launchable via honest empty states, but feels unfinished):**
 - [ ] No published+public work → `/work`, homepage Selected Work, Archive empty.
@@ -311,5 +314,22 @@ the **published** `siteSettings` left untouched (`_rev` unchanged); nothing publ
 | 2026-08-06 | `drafts.siteSettings` | `longBio` | Set to approved 5-paragraph first-person Story bio (Portable Text, verbatim) | **Draft** — same rev |
 | 2026-08-06 | `drafts.siteSettings` | `heroCopy` | Intentionally left empty (unused fallback; `longBio` populated) | — |
 
-Publication of the singleton remains **pending Adi's explicit approval** — the
-public site still shows the published placeholder until then.
+**Phase 5D (2026-08-06):** published the singleton. The canonical Document
+Actions publish failed (409) because it tried to *strengthen* the
+`featuredCurrentEntry` weak ref, whose target workItem has no published version.
+Publish was instead done as Studio does it — a content-preserving transaction
+(`createOrReplace` published from the draft + delete the draft) that keeps
+`featuredCurrentEntry` **verbatim** (weak, unchanged), via the authenticated CLI
+user session. Only `siteSettings` changed; the referenced workItem draft
+(`2a2d65b9…`) was untouched; nothing else published.
+
+| Date | Doc | Field(s) | Change | Draft/Published |
+|------|-----|----------|--------|-----------------|
+| 2026-08-06 | `siteSettings` | `shortBio`, `longBio` | Published approved copy (draft → published) | **Published** — rev `8kVPCFAj0Gzsq6loj2LsdC` (was `9txlVAuf…`) |
+| 2026-08-06 | `siteSettings` | `siteTitle`, `featuredCurrentEntry`, `heroCopy` | Preserved (title unchanged; featured ref verbatim weak; heroCopy absent) | **Published** |
+| 2026-08-06 | `drafts.siteSettings` | — | Deleted by publish (normal lifecycle) | removed |
+
+**Post-publish note:** the published `siteSettings.featuredCurrentEntry` is a
+weak ref to the draft flagship workItem. It is gated (homepage shows the empty
+featured state publicly) and never leaks the draft. See §6 for the durable
+cleanup path (Phase 5E).
