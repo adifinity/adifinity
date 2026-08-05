@@ -81,7 +81,7 @@ function FilterGroup({
             type="button"
             aria-pressed={isActive}
             onClick={() => onSelect(isActive ? null : option.value)}
-            className={`font-mono text-meta uppercase transition-colors ${
+            className={`py-1 font-mono text-meta uppercase transition-colors ${
               isActive ? 'text-annotation underline underline-offset-4' : 'text-ink hover:text-annotation'
             }`}
           >

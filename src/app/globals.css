@@ -103,12 +103,14 @@
     border-radius: 2px;
   }
 
+  /*
+    Plate caption layout only. Typography is set on the component so the
+    "Fig. N" catalog label stays mono/uppercase while the human-written
+    caption and credit render in readable sentence case — real captions
+    are prose, not labels, and must never be shouted in all-caps.
+  */
   .plate figcaption {
     margin-top: calc(var(--spacing) * 3);
-    font-family: var(--font-mono);
-    font-size: var(--text-meta);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--graphite);
   }
 

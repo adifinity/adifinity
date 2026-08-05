@@ -57,7 +57,9 @@ export function RelatedEntries({ entries }: { entries: RelatedEntry[] | null | u
           const body = (
             <>
               <p className="font-mono text-meta text-annotation">{LEAD_INS[type as RelatedEntry['_type']] ?? 'see also—'}</p>
-              <p className="mt-1 font-serif text-caption text-ink">{title}</p>
+              <p className="mt-1 font-serif text-caption text-ink transition-colors group-hover:text-annotation">
+                {title}
+              </p>
               <p className="mt-1 font-mono text-meta uppercase text-graphite">{contextLine(entry)}</p>
               {type !== 'capability' && (entry.summary || entry.description) && (
                 <p className="mt-1 font-serif text-caption italic leading-relaxed text-graphite">

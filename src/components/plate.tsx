@@ -54,12 +54,17 @@ export function Plate({
         className="h-auto w-full"
       />
       {(caption || credit || figure != null) && (
-        <figcaption>
-          {figure != null && `Fig. ${figure}`}
-          {figure != null && (caption || credit) && ' — '}
-          {caption}
-          {caption && credit && ' · '}
-          {credit}
+        <figcaption className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+          {figure != null && (
+            <span className="font-mono text-meta uppercase text-graphite">Fig. {figure}</span>
+          )}
+          {(caption || credit) && (
+            <span className="font-serif text-caption text-graphite">
+              {caption}
+              {caption && credit && ' · '}
+              {credit && <span className="italic">{credit}</span>}
+            </span>
+          )}
         </figcaption>
       )}
     </figure>

@@ -17,6 +17,10 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
     // If the archive API is unreachable the Index degrades to plain
     // navigation without counts or previews — the site stays navigable.
   }
+  // When a CV file is configured the header links straight to it;
+  // otherwise the visible "CV" utility link falls back to /contact (a
+  // real page where the CV surfaces once uploaded) rather than a
+  // non-existent /cv route that would 404.
   const cvUrl = clean(indexData?.settings?.cvFile?.url)
 
   return (
@@ -27,7 +31,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
       >
         Skip to content
       </a>
-      <SiteHeader indexData={indexData} cvHref={cvUrl ?? '/cv'} />
+      <SiteHeader indexData={indexData} cvHref={cvUrl ?? '/contact'} />
       <main id="content" className="flex-1">
         {children}
       </main>
