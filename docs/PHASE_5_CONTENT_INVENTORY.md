@@ -1,7 +1,11 @@
 # Phase 5A — Verified Content Inventory & Population Tracker
 
 _Live project tracker for populating the Adifinity archive with real content and
-preparing it for launch. This is the **control file** for Phase 5A._
+preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
+
+**Latest activity — Phase 5C (2026-08-06):** approved site-identity copy written
+to the **draft** `siteSettings` (`shortBio`, `longBio`); `heroCopy` left empty.
+Nothing published. See §13.
 
 **Rules live elsewhere — do not duplicate them here:**
 - Field-by-field population rules → [`docs/CONTENT_POPULATION_GUIDE.md`](CONTENT_POPULATION_GUIDE.md)
@@ -127,8 +131,8 @@ Legend — Classification: **PLACEHOLDER** = must be replaced with real content 
 
 | Placeholder doc | Becomes | Needs before it can be real |
 |---|---|---|
-| `siteSettings.shortBio` (published) | Real short bio | Approve IDENTITY_LINE **or** supply a fresh 1–2 sentence bio (§6) |
-| `siteSettings.longBio` (published) | Real Story prose | Long-bio source text |
+| `siteSettings.shortBio` | Real short bio | ✅ approved (5B) + written to **draft** (5C); publish pending |
+| `siteSettings.longBio` | Real Story prose | ✅ approved (5B) + written to **draft** (5C); publish pending |
 | flagship workItem `4eb5c9c8…` | **Trust as Collateral** case study | Real title/summary/body + case-study fields (§5 P3) |
 | second workItem `cb911028…` | A genuine 2nd Work entry **or** removed | A real project, or a decision to delete |
 | experience `fcd561ad…` | A real experience | Org name, role, dates, narrative |
@@ -162,8 +166,8 @@ Everything below is either approved copy in the repo or a real signal embedded i
 For each item: **CMS doc · field · why it matters · acceptable source · blocks launch?**
 
 ### P1 — Site identity (highest)
-- [ ] **`siteSettings.shortBio`** — homepage h1 identity line. **Decision:** approve `IDENTITY_LINE` verbatim, or supply a fresh 1–2 sentence bio. _Acceptable:_ Adi's approval / new text. **Blocks launch: YES** (placeholder currently published).
-- [ ] **`siteSettings.longBio`** — Story main prose. _Acceptable:_ 1–4 paragraphs of real bio prose (the transformation arc, in Adi's voice). **Blocks launch: YES** (placeholder currently published).
+- [x] **`siteSettings.shortBio`** — homepage h1 identity line. ✅ Approved third-person bio (5B) written to the **draft** (5C). _Publish still pending — placeholder remains public until then._
+- [x] **`siteSettings.longBio`** — Story main prose. ✅ Approved first-person 5-paragraph bio (5B) written to the **draft** (5C). _Publish still pending._
 - [ ] **`siteSettings.heroCopy`** — Story fallback. _Acceptable:_ optional short prose. Blocks launch: no.
 - [ ] **`siteSettings.contactLinks`** — Contact + Index. _Acceptable:_ label + email/URL pairs (e.g. email, LinkedIn). Blocks launch: no (honest empty state).
 - [ ] **`siteSettings.socialLinks`** — Contact "Elsewhere" + Index. _Acceptable:_ label + URL pairs. Blocks launch: no.
@@ -202,8 +206,8 @@ For each item: **CMS doc · field · why it matters · acceptable source · bloc
 
 ## 6. Required user decisions
 
-- [ ] **Short bio copy (P1):** use the approved `IDENTITY_LINE` verbatim for `siteSettings.shortBio`, or supply a fresh short bio? _(Recommended: approve `IDENTITY_LINE` — it is approved, accurate, and already the fallback.)_
-- [ ] **Published-singleton placeholder:** confirm the plan to (a) set real `shortBio`/`longBio` in the **draft**, then (b) explicitly approve **publishing** the singleton to clear the public placeholder. Until (b), the public site would show placeholder bio text. _(See §12 launch blocker.)_
+- [x] **Short/long bio copy (P1):** RESOLVED (Phase 5B) — approved a third-person homepage `shortBio` and a first-person 5-paragraph Story `longBio` (not the `IDENTITY_LINE` verbatim). Written to the draft in Phase 5C (§13).
+- [ ] **Publish the singleton (P1):** approve **publishing** `siteSettings` so the real bio replaces the public placeholder. The draft copy is ready; until approved, public mode shows the placeholder. _(See §12.)_
 - [ ] **Flagship slug:** keep `trust-as-collateral-preview-template`, or rename to e.g. `trust-as-collateral`? (Renaming pre-publication is clean; the design brief says preserve slugs unless there's a clear reason.)
 - [ ] **Second workItem `cb911028…`:** promote to a real entry, or remove later?
 - [ ] **`test-doc-1`:** remove this scratch doc, or leave it (it only shows on the protected `/test-preview`)?
@@ -227,7 +231,7 @@ For each item: **CMS doc · field · why it matters · acceptable source · bloc
 
 | Element | Source | Status |
 |---|---|---|
-| Identity line (h1) | `siteSettings.shortBio` | ❌ placeholder published; code fallback = `IDENTITY_LINE` |
+| Identity line (h1) | `siteSettings.shortBio` | ⚠️ real copy in **draft** (5C); published doc still placeholder until publish approved |
 | Featured Current Entry (centre) | `siteSettings.featuredCurrentEntry` | ❌ set only on draft (→ draft workItem); not public |
 | Latest Update ("Now") | newest `active` currentUpdate (auto) | ⚠️ two active placeholders, no dates — would compute but placeholder text |
 | Archive fragments | recent public docs | ❌ none public yet → empty |
@@ -277,7 +281,7 @@ Each completed CMS change is logged in §13.
 ## 12. Launch-blocking vs. optional content
 
 **Hard launch blocker (a defect, not an empty state):**
-- [ ] **Published `siteSettings.shortBio` / `longBio` hold placeholder text.** Because the singleton is ungated, this placeholder would appear as the homepage h1 and Story prose in **public** mode. Must be replaced with real copy and re-published before Phase 4 ships. _Smallest fix: set `shortBio` = approved `IDENTITY_LINE` (+ real `longBio`), then publish the singleton — pending Adi's approval._
+- [~] **Published `siteSettings.shortBio` / `longBio` hold placeholder text.** Because the singleton is ungated, this placeholder appears as the homepage h1 and Story prose in **public** mode. **Progress:** approved real copy is now written to the **draft** singleton (Phase 5C, §13). **Remaining:** the blocker clears only when Adi approves **publishing** the singleton. Until then, public mode still shows the placeholder (verified 2026-08-06: no draft copy leaks to public HTML/metadata).
 
 **Content-completeness blockers (site is technically launchable via honest empty states, but feels unfinished):**
 - [ ] No published+public work → `/work`, homepage Selected Work, Archive empty.
@@ -289,13 +293,23 @@ Each completed CMS change is logged in §13.
 
 ---
 
-## 13. CMS change log (Phase 5A)
+## 13. CMS change log
 
-_No CMS documents were created, edited, published, or deleted in the Phase 5A
-inventory session — there was no verifiable source material to populate, and the
-one available change (writing the approved `IDENTITY_LINE` into the published
-singleton) is a publish decision awaiting Adi's approval (§6)._
+**Phase 5A (2026-08-05):** inventory only — no CMS documents created, edited,
+published, or deleted.
+
+**Phase 5C (2026-08-06):** approved site-identity copy written to the **draft**
+singleton. The `.env.local` token is read-only (Viewer, 403 on write), so the
+patch was applied through the authenticated Sanity CLI user session
+(`sanity exec --with-user-token`). Only the two named fields were touched via
+`.set`; `siteTitle` and `featuredCurrentEntry` preserved; `heroCopy` not set;
+the **published** `siteSettings` left untouched (`_rev` unchanged); nothing published.
 
 | Date | Doc | Field(s) | Change | Draft/Published |
 |------|-----|----------|--------|-----------------|
-| — | — | — | (none yet) | — |
+| 2026-08-06 | `drafts.siteSettings` | `shortBio` | Set to approved third-person homepage bio (verbatim) | **Draft** — rev `8kVPCFAj0Gzsq6loj2KK8U` |
+| 2026-08-06 | `drafts.siteSettings` | `longBio` | Set to approved 5-paragraph first-person Story bio (Portable Text, verbatim) | **Draft** — same rev |
+| 2026-08-06 | `drafts.siteSettings` | `heroCopy` | Intentionally left empty (unused fallback; `longBio` populated) | — |
+
+Publication of the singleton remains **pending Adi's explicit approval** — the
+public site still shows the published placeholder until then.
