@@ -3,11 +3,17 @@
 _Live project tracker for populating the Adifinity archive with real content and
 preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
 
-**Latest activity — Phase 5D (2026-08-06):** approved site-identity copy is now
-**published** on the `siteSettings` singleton (`shortBio`, `longBio`); `heroCopy`
-stays empty; `featuredCurrentEntry` unchanged (still a **weak, gated** ref to a
-draft workItem). The public identity placeholder is gone; public verification
-passed. See §13.
+**Latest activity — Phase 5F (2026-08-06):** the **flagship Work draft is built**.
+The *Trust as Collateral* placeholder (`drafts.4eb5c9c8…`) was replaced **in place**
+(UUID preserved) with **GHOROA — The Taste of Home, Wherever You Are** (slug
+`ghoroa-nourish-proposal`), a completed IBA Intra Business Competition proposal
+for Nourish. The full team deck was cleaned of a teammate email and **uploaded as
+a public downloadable PPTX**. Still **draft/private, not published**. `featuredCurrentEntry`
+now resolves (weakly) to this GHOROA draft. See §13.
+
+_Earlier — Phase 5D (2026-08-06):_ approved site-identity copy **published** on the
+`siteSettings` singleton (`shortBio`, `longBio`); `heroCopy` empty; public identity
+placeholder gone.
 
 **Rules live elsewhere — do not duplicate them here:**
 - Field-by-field population rules → [`docs/CONTENT_POPULATION_GUIDE.md`](CONTENT_POPULATION_GUIDE.md)
@@ -65,14 +71,15 @@ Legend — Classification: **PLACEHOLDER** = must be replaced with real content 
 - **Extra vs published:** `featuredCurrentEntry` → weak ref to the flagship workItem draft `4eb5c9c8…` (shows the expected "Referenced document must be published" warning — benign).
 - Same placeholder `shortBio`/`longBio` as the published doc.
 
-### workItem — `drafts.4eb5c9c8-…-a16f198f8` — "Trust as Collateral — Preview Template"
-- **Classification:** PLACEHOLDER → **intended flagship**, replace in place.
-- **Real signal to keep:** `institutionOrClient` = "Institution of Business Administration, Dhaka University"; `primaryCategory` = `financeStrategy`; `phase` = `developing`; `role` = "author & researcher". `dateRange.startDate` = 2026-07-14 (placeholder date).
-- **Placeholder:** `title`, `summary`, `body`.
-- **Missing:** `featuredOrder` (⇒ not on `/work`), `coverMedia`, `problem`/`approach`/`outcome`, `evidence`, `gallery`, `methods`, `collaborators`, `secondaryThemes`, `externalLinks`, `downloadableFiles`, `confidentialityNote`, `credits`, `relatedEntries`, `seo`.
-- **Slug:** `trust-as-collateral-preview-template` (rename decision in §6).
-- **Referenced by:** `drafts.siteSettings.featuredCurrentEntry`.
-- **Appears on:** `/work`, `/work/[slug]`, Archive, homepage (if featured).
+### workItem — `drafts.4eb5c9c8-…-a16f198f8` — **"GHOROA — The Taste of Home, Wherever You Are"** (Phase 5F)
+- **Classification:** REAL flagship draft (replaced the *Trust as Collateral* placeholder **in place** — UUID preserved so `siteSettings.featuredCurrentEntry` still points here).
+- **Status:** `draft` / `private` — **not published**. rev `eWSIqatZ40JEzfekvND1K7`.
+- **Populated (5F):** `title`, `slug` = `ghoroa-nourish-proposal`, `summary`, `body` (15 blocks), `problem`/`approach`/`outcome`, `dateRange` 2026-07-13 (single day, presentation date), `phase` = `demonstrated` (completed proposal, not implemented), `primaryCategory` = `financeStrategy`, `featuredOrder` = **1**, `role` = "Research & development", `institutionOrClient` = "IBA Intra Business Competition — Nourish case", `collaborators` = Kazi Ahnaf Akif · Ayesha Ferdous Faiza · Bushra Lubabah, `credits` (full 4-person team, "Farm er Murgi," 2026), `methods` (6), `secondaryThemes` (3), `confidentialityNote` (context note, not a withholding note), `seo` (title+description), `downloadableFiles` = the cleaned public deck (asset `file-97c95…-pptx`).
+- **Intentionally empty (pending):** `coverMedia`, `gallery`, `externalLinks`, `relatedEntries`, `evidence`, `seo.socialPreviewImage`.
+- **Deck:** cleaned public PPTX (teammate email + tidied metadata removed; all 36 visible slides + citations intact). **No PDF yet** (Bangla font "Li Shadhinata2" not installed → automated PDF unreliable; manual export pending). Underlying Nourish case/source files **not** uploaded.
+- **Referenced by:** `siteSettings.featuredCurrentEntry` (published, weak → this UUID). On publish, GHOROA becomes the homepage Featured Current Entry.
+- **Appears on:** `/work`, `/work/[slug]`, Archive, homepage — **once published** (currently gated out).
+- **Pre-publish admin check:** teammate consent for public name display (collaborators).
 
 ### workItem — `drafts.cb911028-…-fdc00bcac4` — "Placeholder Work Item — Policy & Research Sample"
 - **Classification:** PLACEHOLDER / likely **OBSOLETE** (schema-test second entry).
@@ -135,7 +142,7 @@ Legend — Classification: **PLACEHOLDER** = must be replaced with real content 
 |---|---|---|
 | `siteSettings.shortBio` | Real short bio | ✅ approved (5B) + **published** (5D) — live public |
 | `siteSettings.longBio` | Real Story prose | ✅ approved (5B) + **published** (5D) — live public |
-| flagship workItem `4eb5c9c8…` | **Trust as Collateral** case study | Real title/summary/body + case-study fields (§5 P3) |
+| flagship workItem `4eb5c9c8…` | ✅ **GHOROA** proposal (built 5F, draft) | Replaced in place; cover + gallery + teammate-consent still pending before publish |
 | second workItem `cb911028…` | A genuine 2nd Work entry **or** removed | A real project, or a decision to delete |
 | experience `fcd561ad…` | A real experience | Org name, role, dates, narrative |
 | note `2053a4bb…` | A real note | One real note's text |
@@ -333,3 +340,24 @@ user session. Only `siteSettings` changed; the referenced workItem draft
 weak ref to the draft flagship workItem. It is gated (homepage shows the empty
 featured state publicly) and never leaks the draft. See §6 for the durable
 cleanup path (Phase 5E).
+
+**Phase 5F (2026-08-06):** built the GHOROA flagship by replacing the *Trust as
+Collateral* placeholder **in place** (UUID `4eb5c9c8…` preserved, so the weak
+`featuredCurrentEntry` ref stays valid). Written via the authenticated CLI user
+session with an `ifRevisionId` guard. Deck was cleaned first: only the hidden
+`lastModifiedBy` teammate email (`docProps/core.xml`) and title/creator metadata
+were changed — all 36 visible slides, media and source citations are byte-identical
+(verified). The lone embedded object is slide 4's own market-chart data (not a
+source document). Underlying Nourish case/source files were **not** uploaded.
+
+| Date | Doc | Change | Draft/Published |
+|------|-----|--------|-----------------|
+| 2026-08-06 | asset `file-97c95…-pptx` | Uploaded cleaned public deck (4.67 MB, `GHOROA-Competition-Presentation.pptx`) | asset |
+| 2026-08-06 | `drafts.4eb5c9c8…` | Placeholder → full GHOROA draft (all core fields, PA/O, 15-block body, SEO, `downloadableFiles`); `featured` bool unset | **Draft** — rev `2a2d65b9…` → `eWSIqatZ40JEzfekvND1K7` |
+| 2026-08-06 | `siteSettings` | **Untouched** (`featuredCurrentEntry` still weak → `4eb5c9c8`) | Published (unchanged) |
+
+**Verification:** UUID unchanged; public-perspective queries return `None`/`[]`;
+`/work/ghoroa-nourish-proposal` → 404 publicly; no GHOROA text/asset-URL leak;
+published `4eb5c9c8` does not exist (nothing published). **Pending:** PDF edition
+(manual export — Bangla font missing here), coverMedia + gallery, and teammate
+name-display consent before publication.
