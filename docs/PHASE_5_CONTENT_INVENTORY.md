@@ -8,10 +8,13 @@ preparing it for launch. This is the **control file** for Phase 5 (5A → launch
 `featuredOrder` 1; project date 2026-07-13 unchanged). It now resolves publicly
 as the homepage **Featured Current Entry**, appears first on `/work`, and its
 detail page (cover, 5 plates, PDF + PPTX downloads, collaborators, credits)
-renders correctly. ⚠️ **`featuredWork` could NOT be activated** — it triggered a
-pre-existing homepage query defect (500). `featuredWork` was reverted to keep the
-homepage working; **Selected Work stays empty until a small code fix.** See the
-🐛 defect note below and §13.
+renders correctly.
+
+**Phase 5I (2026-08-07):** ✅ **fixed the `featuredWork` query defect** (a one-token
+parenthesis change in `SITE_SETTINGS_QUERY`) and re-enabled `featuredWork = [GHOROA]`.
+Homepage now shows GHOROA in **Selected Work** (once). `tsc` / `eslint` / `next build`
+all pass. This is the first **code** change in the 5-series (the only one so far).
+See the resolved-defect note below and §13.
 
 _Earlier — Phase 5G (2026-08-07):_ added cover (slide 9), 5-slide gallery, and a
 36-page PDF; `socialPreviewImage` left empty.
@@ -24,9 +27,18 @@ _Earlier — Phase 5D (2026-08-06):_ approved site-identity copy **published** o
 `siteSettings` singleton (`shortBio`, `longBio`); `heroCopy` empty; public identity
 placeholder gone.
 
-### 🐛 Open defect — homepage `featuredWork` query (found in 5H, code fix pending)
+### ✅ Resolved defect — homepage `featuredWork` query (found 5H, fixed 5I)
 
-- **Affected page:** homepage `/` ([`src/app/(site)/page.tsx:104`](../src/app/(site)/page.tsx)) — returns **500**.
+**RESOLVED (2026-08-07):** the `featuredWork` projection in `SITE_SETTINGS_QUERY`
+was parenthesised — `"featuredWork": (featuredWork[]->{ … })[defined(_id) && ${PUBLIC_ENTRY_FILTER}]`
+— so the editorial gate filters the array instead of collapsing each dereferenced
+doc to null. No runtime guard was added (query is now correct; the trailing
+`[defined(_id) && …]` guarantees non-null items, matching the `FeaturedWorkItem[]`
+type). `featuredWork = [GHOROA]` re-enabled; homepage renders GHOROA in Selected
+Work exactly once. `tsc`, `eslint`, and `next build` all pass. Original defect
+detail retained below for the record.
+
+- **Affected page:** homepage `/` ([`src/app/(site)/page.tsx:104`](../src/app/(site)/page.tsx)) — returned **500** before the fix.
 - **Trigger:** any **non-empty** `siteSettings.featuredWork`. The homepage does `featuredWork.map((item) => <WorkRow key={item._id} …/>)` with **no null guard**, and the array contains a `null`.
 - **Root cause:** the `SITE_SETTINGS_QUERY` `featuredWork` projection ([`src/sanity/lib/queries.ts:70`](../src/sanity/lib/queries.ts)) — `featuredWork[]->{…}[defined(_id) && <gate>]`. GROQ operator precedence binds the trailing `[…gate]` to **each dereferenced object**, not the array, so a valid published ref collapses to `null` → `featuredWork` resolves to `[null]`. **Verified empirically:** the buggy shape returns `[null]`; `featuredWork[]->{_id,title}` (no trailing filter) returns `[{…GHOROA}]`.
 - **Repro:** set `siteSettings.featuredWork` to a published+public workItem ref → load `/` in public mode → `TypeError: Cannot read properties of null (reading '_id')`.
@@ -34,7 +46,7 @@ placeholder gone.
   1. **Query (root cause):** parenthesise the deref+project so the gate filters the array — `"featuredWork": (featuredWork[]->{ _id, title, …, coverMedia })[defined(_id) && (<PUBLIC_ENTRY_FILTER>)]` — or gate the refs before dereferencing.
   2. **Defensive (belt-and-suspenders):** `featuredWork.filter(Boolean).map(…)` at page.tsx:104.
 - **Regression risk:** low — `featuredWork` is empty everywhere today; the fix only changes how a (previously-never-populated) field resolves + adds a null guard. Verify with 0 / 1 / 2+ items and in Draft Mode.
-- **Current state:** `featuredWork` **reverted to empty**; homepage renders (Selected Work shows its honest empty state). GHOROA is still published, featured (via `featuredCurrentEntry`), and first on `/work`. Re-add `featuredWork` = [GHOROA] once the query is fixed.
+- **Current state (post-fix):** ✅ `featuredWork = [GHOROA]`; homepage 200 with GHOROA in **Selected Work** (once) **and** as Featured Current Entry; `/work` unchanged (GHOROA first); detail unchanged. Ledger Sort still inactive (only GHOROA public). Verified via dev server + `next build` (homepage prerendered Static without crash).
 
 **Rules live elsewhere — do not duplicate them here:**
 - Field-by-field population rules → [`docs/CONTENT_POPULATION_GUIDE.md`](CONTENT_POPULATION_GUIDE.md)
@@ -421,5 +433,19 @@ credits, context note, "illustrative" on slide 29, SEO title/desc). No draft/`tr
 as collateral`/placeholder/stega leak. **Ledger Sort:** correctly **inactive** (only
 GHOROA public ⇒ <2 fragments — expected, no filler created). Mobile 375px: no
 horizontal overflow, images fit, downloads present. Policy placeholder still
-draft-only; no unrelated document changed. **Launch blocker: the `featuredWork`
-query defect** (see 🐛 note) — Selected Work stays empty until fixed.
+draft-only; no unrelated document changed.
+
+**Phase 5I (2026-08-07) — `featuredWork` query repair (code + data):**
+
+| Date | Doc/File | Change | Result |
+|------|----------|--------|--------|
+| 2026-08-07 | `src/sanity/lib/queries.ts` | `SITE_SETTINGS_QUERY.featuredWork`: wrapped `featuredWork[]->{…}` in parens so `[defined(_id) && <gate>]` filters the array, not each doc. No runtime guard added (query now correct; type contract restored). | code fix |
+| 2026-08-07 | `siteSettings` | Re-set `featuredWork=[GHOROA]` (strong ref, one item); shortBio/longBio/featuredCurrentEntry/siteTitle preserved | Published — rev `ELYHRmWtP4iGWsbqfPisYe` |
+
+**5I verification:** reproduced A `featuredWork[]->{…}[gate]` → `[null]`; proved B
+`(featuredWork[]->{…})[gate]` → `[{GHOROA}]`. After fix + re-enable: homepage `/`
+**200**, GHOROA in Selected Work **exactly once** (1 row, 1 link) + still Featured
+Current Entry; no `_id`-null error in dev log; `/work` + detail unchanged (PDF/PPTX
+intact); Ledger Sort still inactive. **`tsc --noEmit` = 0, `eslint` = 0,
+`next build` = success** (homepage prerendered Static without crash). Draft-Mode
+click-to-edit of `featuredWork` = a manual check (pane can't authenticate Presentation).

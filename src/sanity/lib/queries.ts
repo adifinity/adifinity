@@ -67,7 +67,7 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
       roleTitle,
       coverMedia
     },
-    "featuredWork": featuredWork[]->{
+    "featuredWork": (featuredWork[]->{
       _id,
       title,
       "slug": slug.current,
@@ -80,7 +80,7 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
       role,
       institutionOrClient,
       coverMedia
-    }[defined(_id) && ${PUBLIC_ENTRY_FILTER}]
+    })[defined(_id) && ${PUBLIC_ENTRY_FILTER}]
   }
 `)
 
