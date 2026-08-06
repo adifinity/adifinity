@@ -3,11 +3,18 @@
 _Live project tracker for populating the Adifinity archive with real content and
 preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
 
-**Latest activity — Phase 5G (2026-08-07):** added GHOROA's **media** — cover
-(slide 9), a **5-slide gallery** (12/13/16/22/29) with alt/caption/credit, and a
-**36-page PDF** edition (ordered before the PPTX). `socialPreviewImage` left empty.
-All text untouched; still **draft/private, not published**. Only remaining
-pre-publish gate: teammate name-display consent. See §13.
+**Latest activity — Phase 5H (2026-08-07):** **GHOROA is PUBLISHED** (status
+`published` / visibility `public`; `publishedAt` 2026-08-06T21:24:45Z;
+`featuredOrder` 1; project date 2026-07-13 unchanged). It now resolves publicly
+as the homepage **Featured Current Entry**, appears first on `/work`, and its
+detail page (cover, 5 plates, PDF + PPTX downloads, collaborators, credits)
+renders correctly. ⚠️ **`featuredWork` could NOT be activated** — it triggered a
+pre-existing homepage query defect (500). `featuredWork` was reverted to keep the
+homepage working; **Selected Work stays empty until a small code fix.** See the
+🐛 defect note below and §13.
+
+_Earlier — Phase 5G (2026-08-07):_ added cover (slide 9), 5-slide gallery, and a
+36-page PDF; `socialPreviewImage` left empty.
 
 _Earlier — Phase 5F (2026-08-06):_ built the flagship draft by replacing the
 *Trust as Collateral* placeholder **in place** (UUID preserved) with **GHOROA**
@@ -16,6 +23,18 @@ _Earlier — Phase 5F (2026-08-06):_ built the flagship draft by replacing the
 _Earlier — Phase 5D (2026-08-06):_ approved site-identity copy **published** on the
 `siteSettings` singleton (`shortBio`, `longBio`); `heroCopy` empty; public identity
 placeholder gone.
+
+### 🐛 Open defect — homepage `featuredWork` query (found in 5H, code fix pending)
+
+- **Affected page:** homepage `/` ([`src/app/(site)/page.tsx:104`](../src/app/(site)/page.tsx)) — returns **500**.
+- **Trigger:** any **non-empty** `siteSettings.featuredWork`. The homepage does `featuredWork.map((item) => <WorkRow key={item._id} …/>)` with **no null guard**, and the array contains a `null`.
+- **Root cause:** the `SITE_SETTINGS_QUERY` `featuredWork` projection ([`src/sanity/lib/queries.ts:70`](../src/sanity/lib/queries.ts)) — `featuredWork[]->{…}[defined(_id) && <gate>]`. GROQ operator precedence binds the trailing `[…gate]` to **each dereferenced object**, not the array, so a valid published ref collapses to `null` → `featuredWork` resolves to `[null]`. **Verified empirically:** the buggy shape returns `[null]`; `featuredWork[]->{_id,title}` (no trailing filter) returns `[{…GHOROA}]`.
+- **Repro:** set `siteSettings.featuredWork` to a published+public workItem ref → load `/` in public mode → `TypeError: Cannot read properties of null (reading '_id')`.
+- **Smallest proposed repair (NOT applied — code is out of scope for the 5x content phases):**
+  1. **Query (root cause):** parenthesise the deref+project so the gate filters the array — `"featuredWork": (featuredWork[]->{ _id, title, …, coverMedia })[defined(_id) && (<PUBLIC_ENTRY_FILTER>)]` — or gate the refs before dereferencing.
+  2. **Defensive (belt-and-suspenders):** `featuredWork.filter(Boolean).map(…)` at page.tsx:104.
+- **Regression risk:** low — `featuredWork` is empty everywhere today; the fix only changes how a (previously-never-populated) field resolves + adds a null guard. Verify with 0 / 1 / 2+ items and in Draft Mode.
+- **Current state:** `featuredWork` **reverted to empty**; homepage renders (Selected Work shows its honest empty state). GHOROA is still published, featured (via `featuredCurrentEntry`), and first on `/work`. Re-add `featuredWork` = [GHOROA] once the query is fixed.
 
 **Rules live elsewhere — do not duplicate them here:**
 - Field-by-field population rules → [`docs/CONTENT_POPULATION_GUIDE.md`](CONTENT_POPULATION_GUIDE.md)
@@ -73,18 +92,17 @@ Legend — Classification: **PLACEHOLDER** = must be replaced with real content 
 - **Extra vs published:** `featuredCurrentEntry` → weak ref to the flagship workItem draft `4eb5c9c8…` (shows the expected "Referenced document must be published" warning — benign).
 - Same placeholder `shortBio`/`longBio` as the published doc.
 
-### workItem — `drafts.4eb5c9c8-…-a16f198f8` — **"GHOROA — The Taste of Home, Wherever You Are"** (Phase 5F–5G)
-- **Classification:** REAL flagship draft (replaced the *Trust as Collateral* placeholder **in place** — UUID preserved so `siteSettings.featuredCurrentEntry` still points here).
-- **Status:** `draft` / `private` — **not published**. rev `ELYHRmWtP4iGWsbqfPiHSu`.
+### workItem — `4eb5c9c8-…-a16f198f8` — **"GHOROA — The Taste of Home, Wherever You Are"** (Phase 5F–5H) — **PUBLISHED**
+- **Classification:** REAL flagship, **PUBLISHED** (replaced the *Trust as Collateral* placeholder **in place** — UUID preserved; the draft was consumed on publish).
+- **Status:** **`published` / `public`** (5H). rev `G2blyWsrpd4FcYBaehS2Wa`. `publishedAt` = 2026-08-06T21:24:45Z. *Trust as Collateral* is fully retired.
 - **Text/meta (5F):** `title`, `slug` = `ghoroa-nourish-proposal`, `summary`, `body` (15 blocks), `problem`/`approach`/`outcome`, `dateRange` 2026-07-13, `phase` = `demonstrated` (completed proposal, not implemented), `primaryCategory` = `financeStrategy`, `featuredOrder` = **1**, `role` = "Research & development", `institutionOrClient` = "IBA Intra Business Competition — Nourish case", `collaborators` = Kazi Ahnaf Akif · Ayesha Ferdous Faiza · Bushra Lubabah, `credits`, `methods` (6), `secondaryThemes` (3), `confidentialityNote` (context note), `seo` (title+description).
 - **Media & files (5G):** `coverMedia` = **slide 9** (brand-name/meaning; asset `image-ef6f…`), with alt/caption/credit. `gallery` = **5 slides in order** — 12 (positioning), 13 (roadmap), 16 (brand system), 22 (Gulf route), 29 (illustrative unit economics) — each with alt/caption/credit. `downloadableFiles` = **[0] PDF** (`file-393f…-pdf`) then **[1] cleaned PPTX** (`file-97c95…-pptx`). PDF: 36 pages, all fonts embedded (Bengali = ShonarBangla), no PII.
 - **Intentionally empty (pending):** `externalLinks`, `relatedEntries`, `evidence`, `seo.socialPreviewImage` (left empty — slide-9 crop would clip the bottom tagline at social ratios; a dedicated card is better later).
 - **Deck note:** cleaned public PPTX (teammate email + tidied metadata removed; all 36 visible slides + citations intact). Underlying Nourish case/source files **not** uploaded.
 - **Cover FYI:** slide 9's right-hand background is a generic raw red-meat photo (flagged in 5E as reading as non-chicken); the teammate selected slide 9 knowingly — trivially swappable while draft.
-- **Referenced by:** `siteSettings.featuredCurrentEntry` (published, weak → this UUID). On publish, GHOROA becomes the homepage Featured Current Entry.
-- **Appears on:** `/work`, `/work/[slug]`, Archive, homepage — **once published** (currently gated out).
-- **Pre-publish admin check:** teammate consent for public name display (the only remaining gate, unless another issue is found).
-- **Pre-publish admin check:** teammate consent for public name display (collaborators).
+- **Referenced by:** `siteSettings.featuredCurrentEntry` (published, weak → this UUID) — now **resolves publicly** to GHOROA (homepage Featured Current Entry).
+- **Appears on (public, verified):** homepage (Featured Current Entry) · `/work` (first) · `/work/ghoroa-nourish-proposal` (200, canonical correct) · Archive. **Not** in Selected Work (see 🐛 `featuredWork` defect above).
+- **Teammate consent:** ✅ confirmed (Kazi Ahnaf Akif, Ayesha Ferdous Faiza, Bushra Lubabah may be named publicly).
 
 ### workItem — `drafts.cb911028-…-fdc00bcac4` — "Placeholder Work Item — Policy & Research Sample"
 - **Classification:** PLACEHOLDER / likely **OBSOLETE** (schema-test second entry).
@@ -382,6 +400,26 @@ were set (all text preserved). The teammate-supplied 36-page PDF was inspected
 **5G verification:** cover → slide-9 asset; gallery 5 items in order; PDF =
 `downloadableFiles[0]`, PPTX = `[1]`; text/SEO/collaborators unchanged;
 `/work/ghoroa-nourish-proposal` still 404 publicly; no asset-URL/image/text leak;
-nothing published; Site Settings ref unchanged. **Remaining pre-publish gate:**
-teammate name-display consent (plus optional cover swap — slide-9 raw-meat
-background, and a dedicated social card).
+nothing published; Site Settings ref unchanged.
+
+**Phase 5H (2026-08-07):** **published GHOROA** and attempted its placement, via
+the authenticated CLI session with rev guards.
+
+| Date | Doc | Change | Result |
+|------|-----|--------|--------|
+| 2026-08-07 | `drafts.4eb5c9c8…` → `4eb5c9c8…` | Publish: set `status=published`, `visibility=public`, `publishedAt=2026-08-06T21:24:45Z`; all content preserved; draft consumed | **Published** — rev `G2blyWsrpd4FcYBaehS2Wa` |
+| 2026-08-07 | `siteSettings` | Added `featuredWork=[GHOROA]` … then **reverted** (unset) after it exposed the homepage 🐛 defect (500) | Published — reverted; other fields (shortBio/longBio/featuredCurrentEntry/siteTitle) preserved |
+
+**5H verification:** GHOROA published (status/visibility/phase/featuredOrder/slug
+correct; text/collaborators/cover/gallery/PDF+PPTX intact); `featuredCurrentEntry`
+resolves publicly to GHOROA; API **and** CDN serve it. After a `.next` clear +
+dev restart (stale-cache handling per §12): homepage `/` **200** with GHOROA
+featured + honest empty Selected Work; `/work` **200** (GHOROA first, no
+placeholder); `/work/ghoroa-nourish-proposal` **200** (canonical
+`https://adityaraiyan.com/…`, cover Fig.1, 5 plates, PDF+PPTX links, collaborators,
+credits, context note, "illustrative" on slide 29, SEO title/desc). No draft/`trust
+as collateral`/placeholder/stega leak. **Ledger Sort:** correctly **inactive** (only
+GHOROA public ⇒ <2 fragments — expected, no filler created). Mobile 375px: no
+horizontal overflow, images fit, downloads present. Policy placeholder still
+draft-only; no unrelated document changed. **Launch blocker: the `featuredWork`
+query defect** (see 🐛 note) — Selected Work stays empty until fixed.
