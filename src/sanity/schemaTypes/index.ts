@@ -13,6 +13,7 @@ import {dateRangeType} from './objects/dateRangeType'
 import {externalLinkType} from './objects/externalLinkType'
 import {fileDownloadType} from './objects/fileDownloadType'
 import {imageWithMetadataType} from './objects/imageWithMetadataType'
+import {linkedEvidenceType} from './objects/linkedEvidenceType'
 import {metricType} from './objects/metricType'
 import {seoType} from './objects/seoType'
 import {testType} from './testType'
@@ -35,6 +36,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     imageWithMetadataType,
     externalLinkType,
     fileDownloadType,
+    linkedEvidenceType,
     metricType,
     dateRangeType,
 

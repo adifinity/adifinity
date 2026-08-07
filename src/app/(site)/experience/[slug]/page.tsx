@@ -6,6 +6,7 @@ import { VisualEditing } from 'next-sanity/visual-editing'
 import type { PortableTextBlock } from '@portabletext/react'
 
 import { DisableDraftMode } from '@/components/disable-draft-mode'
+import { EvidencePreview } from '@/components/evidence-preview'
 import { FileList } from '@/components/file-list'
 import { MetaLine } from '@/components/meta-line'
 import { Plate } from '@/components/plate'
@@ -74,9 +75,13 @@ export default async function ExperienceDetailPage({
   const metrics = (experience.metrics ?? []).filter((metric) => clean(metric?.value))
   const externalLinks = (experience.externalLinks ?? []).filter((link) => clean(link.url))
   const evidenceFiles = (experience.evidenceFiles ?? []).filter((file) => clean(file.url))
+  const evidencePreviews = (experience.evidencePreviews ?? []).filter(
+    (item) => item?.image?.asset?._ref,
+  )
   const relatedWork = (experience.relatedWork ?? []).filter((work) => clean(work.slug))
   const websiteUrl = clean(experience.websiteUrl)
   const hasElsewhere = Boolean(websiteUrl) || externalLinks.length > 0
+  const coverFigure = experience.coverMedia?.asset?._ref ? 1 : 0
 
   return (
     <div className="mx-auto max-w-7xl px-6">
@@ -169,6 +174,21 @@ export default async function ExperienceDetailPage({
               </div>
             </section>
           )}
+
+          {/* Linked visual evidence — screenshots that cite external posts;
+              each image and its citation open the original source in a new tab */}
+          {evidencePreviews.length > 0 && (
+            <section aria-labelledby="exp-evidence" className="mt-14">
+              <h2 id="exp-evidence" className="font-serif text-h2 text-ink">
+                Evidence
+              </h2>
+              <div className="mt-6 space-y-12">
+                {evidencePreviews.map((item, index) => (
+                  <EvidencePreview key={index} item={item} figure={coverFigure + index + 1} />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         {/* Margin rail — references only; the header already carries identity */}
@@ -213,7 +233,7 @@ export default async function ExperienceDetailPage({
 
           {evidenceFiles.length > 0 && (
             <div className="border-t border-rule pt-4">
-              <h2 className="font-mono text-meta uppercase text-graphite">Evidence</h2>
+              <h2 className="font-mono text-meta uppercase text-graphite">Documents</h2>
               <FileList files={evidenceFiles} />
             </div>
           )}

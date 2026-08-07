@@ -112,6 +112,14 @@ export const experienceType = defineType({
       of: [{type: 'fileDownload'}],
       description: 'Downloadable artifacts — study guides, appointment material, certificates.',
     }),
+    defineField({
+      name: 'evidencePreviews',
+      title: 'Linked evidence',
+      type: 'array',
+      of: [{type: 'linkedEvidence'}],
+      description:
+        'Screenshots of official external posts (Facebook, Instagram, etc.). Each image and its citation open the original source.',
+    }),
   ],
   preview: {
     select: {title: 'title', org: 'organisation', role: 'roleTitle', media: 'organisationLogo'},

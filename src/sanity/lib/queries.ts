@@ -398,6 +398,16 @@ export const EXPERIENCE_DETAIL_QUERY = defineQuery(`
     websiteUrl,
     "externalLinks": externalLinks[]{label, url},
     "evidenceFiles": evidenceFiles[]${FILE_PROJECTION},
+    "evidencePreviews": evidencePreviews[]{
+      title,
+      source,
+      platform,
+      url,
+      image{
+        ...,
+        "dims": asset->metadata.dimensions{width, height}
+      }
+    },
     "relatedWork": (relatedWork[]->{
       _id,
       _type,
@@ -788,6 +798,14 @@ export type MetricValue = {
   note: string | null
 }
 
+export type LinkedEvidence = {
+  title: string | null
+  source: string | null
+  platform: string | null
+  url: string | null
+  image: (SanityImageValue & { dims: ProseImageDims | null }) | null
+}
+
 export type ExperienceDetailPayload = {
   _id: string
   title: string | null
@@ -811,6 +829,7 @@ export type ExperienceDetailPayload = {
   websiteUrl: string | null
   externalLinks: ExternalLinkValue[] | null
   evidenceFiles: FileAssetInfo[] | null
+  evidencePreviews: LinkedEvidence[] | null
   relatedWork: RelatedEntry[] | null
   relatedEntries: RelatedEntry[] | null
 }

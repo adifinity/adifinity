@@ -10,7 +10,16 @@ as the homepage **Featured Current Entry**, appears first on `/work`, and its
 detail page (cover, 5 plates, PDF + PPTX downloads, collaborators, credits)
 renders correctly.
 
-**Phase 5I-B (2026-08-07):** built the **Experience detail surface** —
+**Phase 5I-B2 (2026-08-07):** added **linked visual evidence** to Experience — a
+reusable `linkedEvidence` object (`experience.evidencePreviews[]`: screenshot +
+title + source? + platform? + required url) rendered as a main-column **"Evidence"**
+section where the image *and* its citation open the original external post in a new
+tab (link-rot resilient; alt/caption/link-label kept distinct). The rail files block
+was renamed "Evidence" → **"Documents"**. Additive/backward-compatible; `tsc`/`eslint`/
+`build` pass; no regressions. Placeholder untouched. **Five real Experiences still
+pending (5I-C).** See §13.
+
+_Earlier — Phase 5I-B (2026-08-07):_ built the **Experience detail surface** —
 `/experience/[slug]` (a first-class but restrained archival record; discovered via
 now-clickable Story annotations + Archive records; no index, no nav item). Added
 `EXPERIENCE_DETAIL_QUERY`/`_META_QUERY`, a minimal schema extension (`externalLinks`
@@ -480,3 +489,23 @@ Featured Current Entry + Selected Work intact, `/work/ghoroa` 200, 0 dev-log
 errors, featuredWork repair unchanged. **Manual (needs Studio auth):** the
 preview *visual* of `/experience/[placeholder-slug]` + clickable annotation.
 No Experience published; placeholder untouched.
+
+**Phase 5I-B2 (2026-08-07) — linked visual evidence (code + schema + docs):**
+
+| File | Change |
+|------|--------|
+| `src/sanity/schemaTypes/objects/linkedEvidenceType.ts` | **new** `linkedEvidence` object `{image: imageWithMetadata, title, source?, platform?, url}` (url required) |
+| `src/sanity/schemaTypes/index.ts` | registered `linkedEvidenceType` |
+| `src/sanity/schemaTypes/documents/experienceType.ts` | +`evidencePreviews` (array of `linkedEvidence`); additive, nothing removed/renamed |
+| `src/sanity/lib/queries.ts` | `EXPERIENCE_DETAIL_QUERY` +`evidencePreviews` (image with dims); +`LinkedEvidence` type; `ExperienceDetailPayload` +field |
+| `src/components/evidence-preview.tsx` | **new** `EvidencePreview` — clickable image + sibling citation link (no nesting), intrinsic/aspect-preserved, distinct alt/link-label/caption |
+| `src/app/(site)/experience/[slug]/page.tsx` | render "Evidence" main section; rail "Evidence"→"Documents" |
+| docs | handoff §16b, guide §4, this file |
+
+**5I-B2 verification:** projection valid (placeholder resolves, `evidencePreviews`
+null). `tsc`=0, `eslint`=0, `next build`=success. Public: `/`,`/story`,`/archive`,
+`/work` 200; experience routes 404 (gated); **no regression** (GHOROA featured +
+Selected Work intact, `/work/ghoroa` 200, no placeholder leak, 0 dev-log errors).
+**Manual (Studio auth):** the *visual* render of an evidence preview (image
+clickable → original post; citation link; focus; responsive) — needs a real
+`linkedEvidence` item in Draft Mode. Placeholder untouched; nothing published.

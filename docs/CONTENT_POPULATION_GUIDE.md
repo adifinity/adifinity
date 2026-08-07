@@ -88,7 +88,13 @@ Field notes are **evidence from places**, not travel content. The `observation` 
 - **Archive record:** `title`, `summary`, `organisation` — `roleTitle`, catalog meta.
 - **Detail page (`/experience/[slug]`):** everything — `summary` (lede), `coverMedia` (Fig. 1 plate; needs alt), `narrativeBody` (prose, not bullet résumé lines), `verifiedFacts` (renders as **"On the record"** — short checkable statements, *not* badges), `metrics` (**"In numbers"** — label + value + optional note), and a margin rail: `websiteUrl` + **`externalLinks`** (Elsewhere), **`evidenceFiles`** (Evidence — downloadable study guides/certificates/appointment material, human titles), `relatedWork` (→ Work), `relatedEntries` (cross-references).
 
-**Links & evidence (added 5I-B):** `websiteUrl` is the single primary link; use **`externalLinks`** (label + url) for several official pages (Facebook, Instagram, org site) and **`evidenceFiles`** (title + file) for downloadable artifacts. `relatedWork` points at Work items; `relatedEntries` at any archive entry. Keep experiences factual and checkable; honest student/youth-institution framing.
+**Four distinct visual/link concepts — don't mix them up:**
+- **`coverMedia`** = the Experience's own cover image (Fig. 1). Visual identity only.
+- **`externalLinks`** (label + url) = ordinary **textual** links to org sites / social profiles (render in the "Elsewhere" rail). `websiteUrl` is the single primary textual link.
+- **`evidenceFiles`** (title + file) = **downloadable documents** — study guides, appointment PDFs, certificates (render in the "Documents" rail).
+- **`evidencePreviews`** (`linkedEvidence`: image + title + source? + platform? + **url**) = **linked visual evidence** — a *screenshot of an official external post* whose **image and citation both open the original post** in a new tab (render as the main-column **"Evidence"** section). *Use this for a Facebook/Instagram post screenshot* — **not** `coverMedia`, **not** `evidenceFiles`, **not** a gallery. Three separate texts: the image **alt** describes the screenshot; the **caption** gives archival context (e.g. "Presidential appointment announcement · DRMCMUNA, 2024"); the link's meaning ("View the original … on Facebook") is derived. `url` is required; the local screenshot still shows even if the post later disappears.
+
+`relatedWork` points at Work items; `relatedEntries` at any archive entry. Keep experiences factual and checkable; honest student/youth-institution framing.
 
 ---
 
