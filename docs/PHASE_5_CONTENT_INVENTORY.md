@@ -3,7 +3,24 @@
 _Live project tracker for populating the Adifinity archive with real content and
 preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
 
-**Latest activity — Phase 5I-D (2026-08-08):** **Experience is now a first-class
+**Latest activity — Phase 5I-E (2026-08-08):** **final Experience evidence set
+locked** (CMS content-correction; still **draft / private — NOT published**).
+**DRMCMUNA Academics** gained **four representative study-guide `evidenceFiles`**
+— DISEC · NATO · US Cabinet · USSR Cabinet, in that order (each inspected: page
+counts agree across two PDF libraries, no email/phone/ID PII, uploaded as-is);
+metrics preserved at **350+ / 8**. **WACMUN** gained **source-grounded metrics** —
+**Applications 146 · Committees offered 5** (re-verified against the registration
+form: 146 submissions, 5 committee options), with the discredited **239 / 37 / 6**
+figures kept out and **no Countries metric**; the **ICJ guide** is confirmed
+(**79 pages**, all readable) and retained. **IBA** rank stays **visual-evidence
+only** (no text/metric; "11,147" omitted). **YAF & Presidency unchanged.** Dates
+render at **month level** (no false day precision) → no formatter change (§9).
+Public privacy re-verified: all five `/experience/[slug]` **404**, `/experience`
+200 empty, no leaks, GHOROA + Site Settings untouched. **The next phase is
+publication review.** See [`docs/EXPERIENCE_EVIDENCE_PLAN.md`](EXPERIENCE_EVIDENCE_PLAN.md)
+and §13.
+
+**Earlier — Phase 5I-D (2026-08-08):** **Experience is now a first-class
 accessible destination** (code/navigation only — no CMS mutations). Added the
 **`/experience` landing register** (`src/app/(site)/experience/page.tsx`, a
 chronological register ordered by `dateRange.startDate` ascending, via a dedicated
@@ -624,3 +641,22 @@ each `/experience/[slug]`, click-to-edit) — the verification pane cannot authe
 Presentation, and its rAF clock is suspended (`visibilityState: hidden`), so the
 overlay open-animation and Draft-Mode render are the two things left to eyeball.
 Nothing published; nothing merged.
+
+**Phase 5I-E (2026-08-08) — final Experience evidence cleanup (CONTENT WRITE):**
+Authorized CMS content-correction via the authenticated CLI user session
+(`sanity exec --with-user-token`, raw perspective, `ifRevisionID` guards on both
+docs from `ELYHRmWtP4iGWsbqfPuZbB`; guard also asserted draft/private + 0 published
+before writing). Four study-guide PDFs uploaded; two docs patched. **No document
+published; the read-only `.env.local` token is unchanged; Site Settings, GHOROA,
+Story, homepage, capabilities, current updates, and all Work docs untouched.**
+
+| Date | Doc | Change | Draft/Published |
+|------|-----|--------|-----------------|
+| 2026-08-08 | 4 × `file-…-pdf` | Uploaded DISEC (`0bae243d…`, 27.5 MB), NATO (`c2a3dde4…`, 19.1 MB), US Cabinet (`76857326…`, 9.1 MB), USSR Cabinet (`598cc857…`, 18.2 MB) — all PII-clean | assets |
+| 2026-08-08 | `drafts.5f35a12a…` (Academics) | `set evidenceFiles` = [DISEC, NATO, US Cabinet, USSR Cabinet] (order intentional); metrics/preview/facts/narrative untouched | **Draft** — rev `ELYHRmWtP4iGWsbqfPuZbB` → `G2blyWsrpd4FcYBaeiER8d` |
+| 2026-08-08 | `drafts.fcd561ad…` (WACMUN) | `set metrics` = [Applications 146 (note), Committees offered 5 (note)]; ICJ evidenceFile + preview + facts + summary preserved | **Draft** — rev `ELYHRmWtP4iGWsbqfPuZbB` → `G2blyWsrpd4FcYBaeiERFM` |
+| 2026-08-08 | Academics metrics · IBA · YAF · Presidency | **Preserved** (350+/8 kept; IBA no rank/metric; YAF 11 + no country count; Presidency unchanged) | Draft (rev unchanged where untouched) |
+
+**Inspection (5I-E):** ICJ guide **79 pages** (PyMuPDF = pypdf = Spotlight agree; earlier "14" was the attachment tool), all 79 text-readable, opens, no PII. Four DRMCMUN guides: page counts agree across two libraries (DISEC 46 · NATO 35 · US Cabinet 24 · USSR Cabinet 21), **no email/phone/ID PII**, empty author metadata → uploaded as-is (no scrub needed). Provenance: DISEC & NATO name DRMCMUN 2024 internally; US/USSR Cabinet identified by filename + folder + committee match (US-Soviet Crisis Cabinet JCC). WACMUN registration re-verified: **146 submissions**, **5 committee options** (col E); country columns are representation preferences → no Countries metric.
+
+**5I-E verification (post-write, read-only):** Academics — exactly **4 evidenceFiles** in order, correct titles/descriptions, byte-exact assets, metrics 350+/8, FB preview + facts + narrative intact. WACMUN — metrics **Applications 146 / Committees offered 5**, **no 239/37/6**, no Countries metric, **ICJ preserved**, IG preview + restrained summary/facts intact. IBA/YAF/Presidency **rev unchanged**. All five **draft/private/no publishedAt; 0 published**. **Preview** detail projection (`$preview=true`) renders both edited pages with the new evidence/metrics; **public** projection returns `null` (404). Dates render **month-level** (no false day precision) → no code change (§9). All 5 asset URLs downloadable (200, byte-exact, `application/pdf`). Public: `/experience` 200 empty, `/story`/`/archive` no experience leak, all five slugs **404**, GHOROA unchanged. **Manual (Adi's Studio auth):** the Draft-Mode Presentation *visual* of the two edited detail pages (four guides open/download; 146/5 labelled correctly). Nothing published; nothing merged.

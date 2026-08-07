@@ -1,11 +1,18 @@
 # Experience Evidence Plan — the authoritative Experience tracker
 
 _Created Phase 5I-C (2026-08-08). Tracks the five real Experience drafts, their
-evidence, held claims, and publication gates. All five are **draft / private —
+evidence, held claims, and publication gates. All five remain **draft / private —
 not published.**_
 
 **Rules:** [`CONTENT_POPULATION_GUIDE.md`](CONTENT_POPULATION_GUIDE.md) §4 ·
-[`MARGINALIA_DESIGN_HANDOFF.md`](MARGINALIA_DESIGN_HANDOFF.md) §16a/§16b.
+[`MARGINALIA_DESIGN_HANDOFF.md`](MARGINALIA_DESIGN_HANDOFF.md) §16a/§16b/§16c.
+
+**Phase 5I-E (2026-08-08) — final evidence set locked (still not published):**
+Academics gained **four representative study-guide `evidenceFiles`** (DISEC ·
+NATO · US Cabinet · USSR Cabinet, in that order); WACMUN gained **source-grounded
+metrics** (Applications 146 · Committees offered 5) with the ICJ guide confirmed
+(79 pp) and kept; IBA's rank stays **visual-evidence only**; YAF & Presidency
+unchanged. All uploads PII-clean. The next phase is **publication review**.
 
 ## Screenshot → original-post mapping (verified via post caption + OpenGraph image)
 
@@ -23,18 +30,25 @@ All five matched confidently — **no pending mappings.**
 
 ### WACMUN 2024 — `fcd561ad-…` (repurposed placeholder)
 - **Verified & populated:** roleTitle (Deputy SG · ICJ Chair), organisation, `Online`, dateRange **15–16 Jun 2024** (from the WACMUN IG bio), founding trio (Prisha Ahuja SG / Govind Khetpal DG), ICJ committee (Russia–Ukraine).
-- **Linked visual evidence:** Deputy SG post (IG, above). **Evidence file:** ICJ Study Guide PDF (`file-0d5b…-pdf`; no PII; MS-Word-generated).
+- **Metrics (5I-E, source-grounded):** **Applications 146** (_"Submissions recorded in the supplied WACMUN 2024 registration form."_) · **Committees offered 5** (_"Committee options listed in the supplied registration form."_). **Re-verified 5I-E** against `WACMUN'24 registration .xlsx`: 147 rows incl. header → **146 submissions**; column E "committee first preference" has exactly **5** options (UNGA, CSW, ICJ, UNHRC, ECOSOC). Labelled **Applications**, never delegates/attendees/participants.
+- **Rejected (unverified) — not present anywhere:** ⚠️ **239 delegates / 37 countries / 6 committees.** The registration is an *application form*, not an attendance roster; its "country first/second preference (please check countries on mymun)" columns are **representation preferences, not nationalities** → **no Countries metric** was created. Narrative/verifiedFacts/summary stay qualitatively restrained (international / online); audit-confirmed 5I-E that none of `239`/`37`/`6 committee` appears in the doc.
+- **Linked visual evidence:** Deputy SG post (IG, above). **Evidence file:** ICJ Study Guide PDF (`file-0d5b…-pdf`) — **user-confirmed correct file (5I-E)**; **79 pages** (authoritative: PyMuPDF = pypdf = Spotlight all agree; the earlier "14" was the attachment tool being wrong), all 79 pages text-readable, opens cleanly, no email/phone/ID PII, empty author metadata. Kept as the single WACMUN evidenceFile.
 - **Public links:** Official Instagram `@wacmun24`.
-- **Held claims:** ⚠️ **239 delegates / 37 countries / 6 committees — NOT populated.** The WACMUN registration is a **146-row application form** offering **5 committees** (CSW, ECOSOC, ICJ, UNGA, UNHRC); its "country" column is a free-text *representation preference* (111 noisy values), not delegate nationalities. Metrics left empty (§9). **Need:** the final conference figures from an authoritative source if you want these surfaced.
-- **Publication gates:** confirm exact dates OK; decide on the missing scale metrics; confirm ICJ PDF is the correct/final version (I could not render its pages here — Spotlight reports 79 pages vs the 14 the attachment tool reported).
+- **Publication gates:** confirm the approximate date framing (WACMUN itself is exact); metrics + ICJ file now **resolved**. **Do not** upload the registration spreadsheet (participant emails + full names).
 
 ### DRMCMUNA — Academics — `5f35a12a-…`
 - **Verified & populated:** roleTitle (Junior Rep · ASG Academics), organisation, `Dhaka, Bangladesh`. **Metrics: Delegates 350+ · Committees 8** — supported: the DRMCMUN registration has **488 rows** across **8 distinct committees** (SOCHUM, DISEC, UNSC, HWHO, NATO, IP, National Parliament/জাতীয় সংসদ, US-Soviet Crisis Cabinet).
 - **Linked visual evidence:** ASG Academics post (FB, above).
 - **Public links:** Official Facebook + Instagram.
-- **User-confirmed / narrative only (Level B):** "wrote roughly half of the study guides" — kept in narrative, **not** in verifiedFacts (the 9 study-guide PDFs carry no per-author attribution). Flooded-auditorium anecdote + Palestinian-Ambassador — narrative, restrained.
-- **Held / not uploaded:** the **9 DRMCMUN 2024 study guides** (DISEC, US Cabinet, EU, IP, UNSC, Historical WHO, USSR Cabinet, NATO, Interim Government) — held pending **your selection of the ones you actually authored** (recommend 2–3 as `evidenceFiles`; the study-guide count is 9, not the "8" committees). **Do not** upload the DRMCMUN registration sheet (participant PII).
-- **Publication gates:** exact dates (encoded `2023-09-01 → 2024-11-30`, approximate — confirm); pick representative study guides.
+- **User-confirmed / narrative only (Level B):** "wrote roughly half of the study guides" — kept in narrative, **not** in verifiedFacts and **not** claimed in the evidence-file descriptions (the PDFs carry no per-author attribution; descriptions say "prepared for the … committee at DRMCMUN 2024", never "written entirely by Raiyan"). Flooded-auditorium anecdote + Palestinian-Ambassador — narrative, restrained.
+- **Evidence files (5I-E — user-selected representative set, uploaded, in order):**
+  1. **DISEC — Study Guide** (`file-0bae243d…-pdf`, 27.5 MB, 46 pp) — body internally references DRMCMUN 2024.
+  2. **NATO — Study Guide** (`file-c2a3dde4…-pdf`, 19.1 MB, 35 pp) — EB message internally names "Dhaka Residential Model United Nations 2024".
+  3. **US Cabinet — Study Guide** (`file-76857326…-pdf`, 9.1 MB, 24 pp) — topic: US Cabinet on the Vietnam War (1953–61).
+  4. **USSR Cabinet — Study Guide** (`file-598cc857…-pdf`, 18.2 MB, 21 pp).
+  All four: opened + page-counted with **two libraries in agreement**, **no email/phone/ID PII**, empty author metadata → uploaded as-is (no metadata scrub needed). Each is a **separate `fileDownload`** (no ZIP). ⚠️ **Provenance note:** DISEC & NATO self-identify as DRMCMUN 2024 internally; **US Cabinet & USSR Cabinet do not name the conference in-document** — they are identified by filename + the `Study Guides DRMCMUN 2024` folder + the committee match (the DRMCMUN 2024 registration's **US-Soviet Crisis Cabinet** JCC = these two sides). This is Adi's own authoritative selection.
+- **Intentionally NOT surfaced:** the other five guides (UNSC, IP, Historical WHO, European Union, Interim Government) — present on disk, deliberately excluded from the public set. **Registration sheet never uploaded** (participant PII).
+- **Publication gates:** exact dates (encoded `2023-09-01 → 2024-11-30`, approximate — confirm); evidence set now **resolved**.
 
 ### DRMCMUNA — Presidency — `1c685bfd-…`
 - **Verified & populated:** President; **General Secretary Ibtisam Mahe** — both **confirmed by the official EC formation document** (President = Aditya Raiyan, GS = Ibtisam Mahe). Declined-SG / advisory framing in narrative.
@@ -52,14 +66,14 @@ All five matched confidently — **no pending mappings.**
 ### Institute of Business Administration — `bae83bb3-…`
 - **Verified & populated:** BBA Student, University of Dhaka; type `education`, phase **`current`** (start `2025-01-01`, ongoing). **Relation:** → GHOROA (relatedWork).
 - **Linked visual evidence:** IBA Merit-4th post (FB, above).
-- **⚠️ HELD claim — the rank:** "Merit 4th" appears **only inside the evidence-preview image**; it is **not** in verifiedFacts or narrative. **"11,147 candidates" appears nowhere** (no source shows it). **Publication gate (needs your approval, §13/§E):** whether to state the rank in text, and the exact wording. Proposed if approved: _"…after a focused preparation, admitted to IBA's BBA 34th batch on the fourth merit position."_ **Do not publish the rank without your sign-off.**
-- **Publication gates:** rank wording approval; exact IBA start month (encoded Jan 2025 — confirm).
+- **Rank — FINAL decision (5I-E):** "Merit 4th" stays **visual evidence only** (inside the linked FB preview image). **Not** added to summary, narrativeBody, verifiedFacts, or metrics. **"11,147 candidates" / national-ranking / admission-performance prose — omitted entirely** (appears in no source). The record stays centred on entering IBA, the field change, business education, and current direction toward finance & strategy — **not** an admission-results page. IBA has **no metrics** (confirmed 5I-E).
+- **Publication gates:** exact IBA start month (encoded Jan 2025 — confirm). Rank question **closed**.
 
 ## Cross-cutting held / private
 - **Registration spreadsheets** (WACMUN 146 rows; DRMCMUN 488 rows) — **private verification sources only; never uploaded** (participant emails/phones/IDs).
 - **EC formation document** — private (other students' data).
-- **DRMCMUN study guides (9)** — held pending your authored-selection.
+- **DRMCMUN study guides — 4 of 9 now surfaced** (DISEC · NATO · US Cabinet · USSR Cabinet, per Adi's 5I-E selection); the other five (UNSC, IP, Historical WHO, European Union, Interim Government) intentionally not surfaced.
 - **Crimson Education** — deliberately **not** an Experience (Story/CV per 5I-A).
 
 ## Global publication gate
-All five are **draft / private**. Before any publish: teammate/co-founder name-display consent (Prisha Ahuja & Govind Khetpal already consented per your source; Ibtisam Mahe named factually from the official EC doc), date confirmations, the WACMUN scale metrics decision, the study-guide selection, and the **IBA rank wording approval**.
+All five are **draft / private**. Evidence is now **locked** (5I-E). Remaining before any publish: teammate/co-founder name-display consent (Prisha Ahuja & Govind Khetpal already consented per your source; Ibtisam Mahe named factually from the official EC doc) and **date-framing confirmation** for the four approximate records (Academics, YAF, Presidency, IBA — all render at month level, no false day precision). The WACMUN metrics, study-guide selection, and IBA-rank questions are **resolved**. Next phase: **publication review**.
