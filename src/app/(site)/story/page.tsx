@@ -117,6 +117,14 @@ export default async function StoryPage() {
                 Experience records will be annotated here as they are filed.
               </p>
             )}
+            {experiences.length > 0 && (
+              <Link
+                href="/experience"
+                className="mt-4 inline-block font-mono text-meta uppercase text-graphite transition-colors hover:text-annotation"
+              >
+                All experience <span aria-hidden="true">→</span>
+              </Link>
+            )}
           </div>
         </aside>
       </section>

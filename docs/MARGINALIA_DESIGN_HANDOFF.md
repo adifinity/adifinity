@@ -160,6 +160,7 @@ The homepage's one spectacular moment: the archive appears as a readable index, 
 - Trigger is a semantic `<button aria-expanded aria-controls>`; pre-hydration/no-JS it's an anchor to the footer index.
 - Opening moves focus in; **focus is trapped**; `Esc` closes; closing restores focus to the trigger; route navigation closes it. Body scroll locks with scrollbar-width compensation (no layout jump); scroll position is preserved. The overlay's exit sets `pointer-events:none` so a fading layer never blocks the page.
 - Shows all destinations + live entry counts (hidden at zero) + a recent-entries preview + correspondence. **CV appears only when a CV file exists** (no broken link).
+- **Destination order (Phase 5I-D):** Home · Story · Work · **Experience** · Now · Notes · Field Notes · Archive · Contact · [CV]. The **no-JS footer Index** (`site-footer.tsx`, the pre-hydration fallback the trigger anchors to) mirrors the same order — keep the two in sync when adding a destination.
 - The desktop utility links (Work / Story / Contact / CV) stay **outside** the Index and always visible ≥1024px — the Index supplements navigation, it does not replace it.
 
 ---
@@ -201,11 +202,11 @@ Draft-mode enable/disable routes · `sanityFetch` · `archiveFetch` · `SanityLi
 
 ---
 
-## 16a. Experience detail surface (added Phase 5I-B)
+## 16a. Experience detail surface (added Phase 5I-B; discovery updated Phase 5I-D)
 
-Experience is a **first-class but restrained** archival record. It is **discovered**, never indexed:
+Experience is a **first-class** archival record. As of Phase 5I-D it has **three discovery doorways** (see §16c for the register):
 
-- **Discovery:** Story "Annotations" (compact, now **clickable** when a slug resolves) and Archive records (now clickable). **No `/experience` index, no header nav item, no experience grid or résumé timeline.**
+- **Discovery:** (1) the **`/experience` register** — a chronological Index destination; (2) Story "Annotations" (compact, **clickable** when a slug resolves) — the narrative doorway; (3) Archive records (clickable) — the catalog doorway. All three are intentional and kept; none replaces the others. There is still **no header/utility nav item** and **no experience grid, card wall, or résumé timeline.**
 - **Detail:** `/experience/[slug]` (`src/app/(site)/experience/[slug]/page.tsx`) — a Server Component through `archiveFetch` + the editorial gate + `SanityLive` + Draft-Mode/Visual-Editing block, exactly like `/work/[slug]`. Dynamic (`ƒ`); no `generateStaticParams`, so drafts never become static params. `notFound()` when the gated query returns null.
 - **Queries:** `EXPERIENCE_DETAIL_QUERY` + `EXPERIENCE_META_QUERY` in `queries.ts`. Related refs use the **parenthesised** `(x[]->{…})[gate]` form (the featuredWork precedence fix from `576d1b5`); `RELATED_ENTRIES_PROJECTION` was corrected to the same shape.
 - **Page IA:** meta line (`X · year · type · date-range · phase`) → `title` (record identity) → `roleTitle` (my role) → `organisation · location` → `summary` → cover `Plate` → `narrativeBody` (`PortableProse`) → **On the record** (`verifiedFacts`, a hairline list — never badges/checkmarks) → **In numbers** (`metrics`, quiet figures with optional notes) → **Evidence** (`evidencePreviews` — linked visual citations; see §16b). Margin rail carries **references only** (Elsewhere = `websiteUrl` + `externalLinks`; **Documents** = `evidenceFiles` via `FileList`; Related work = `relatedWork` → `/work/[slug]`; `RelatedEntries` for `relatedEntries`) — never duplicating header identity.
@@ -221,6 +222,20 @@ A **`linkedEvidence`** object (reusable; `experience.evidencePreviews[]`) is a *
 - **`title` vs `roleTitle`:** `title` = the archival event/record identity (e.g. "WACMUN 2024"); `roleTitle` = the role inside it (e.g. "Deputy Secretary General · Chair, ICJ"). Keep them distinct to avoid duplication.
 - **Schema extension:** `experience` gained `externalLinks` (array of the existing `externalLink` object) and `evidenceFiles` (array of the existing `fileDownload` object). `websiteUrl` is retained. No new object types were invented; no fields removed/renamed.
 - **Story ordering:** experiences now sort **chronologically (oldest→newest)** — a formation timeline that mirrors the prose and reads less like a reverse-chron résumé.
+
+## 16c. Experience register — the `/experience` landing (added Phase 5I-D)
+
+`/experience` (`src/app/(site)/experience/page.tsx`) is the canonical home of the Experience records — an **annotated archival chronology**, never a "Professional Experience" CV, employment history, card grid, logo wall, or skill-badge page.
+
+- **Purpose:** answer "where has time actually been spent learning, building, representing, and changing direction?" — enough to grasp the chronology and pick a record to open. It is a **preview register, not a duplicate of the detail page**: no narrativeBody, metrics wall, evidence gallery, downloads, or social previews here — those live in `/experience/[slug]`.
+- **Order:** strictly chronological by factual `dateRange.startDate` **ascending** (earliest → current) — a formation, never reverse-chron résumé order, never creation/publish/alpha/manual order. `EXPERIENCE_INDEX_QUERY` does `order(coalesce(dateRange.startDate, _createdAt) asc)`. If approximate CMS dates ever stop producing the intended narrative sequence, **fix the dates, not the sort.**
+- **Query/type:** dedicated `EXPERIENCE_INDEX_QUERY` + `ExperienceListItem` in `queries.ts`, through `archiveFetch` + the same editorial gate. Fetches only landing fields (`title, slug, summary, phase, organisation, roleTitle, type, dateRange`). **Public** shows published+public only; **preview** shows drafts.
+- **Empty state (public, today):** all Experiences are still draft/private, so `/experience` returns **200 with an honest `EmptyNote`** ("No experience records are on public display yet…") — never 404, never filler. When they publish, the same query surfaces them with **no code change**.
+- **Row IA:** whole row is one semantic `Link` to `/experience/[slug]` (no nested links; "View record →" is affordance text inside the row, not the only target). `MetaLine` (`X · type · date-range · phase`) → `title` → `roleTitle — organisation` (italic) → `summary` → `View record →`. **Current** work (IBA) reads only as the quiet `phase` label — no dots/pulses/pills/"CURRENT" tags.
+- **Index placement:** **Experience** is a top-level destination in **both** the overlay Index (`site-index.tsx`) and the no-JS footer Index (`site-footer.tsx`), placed **after Work** (peer of Work, not buried under Archive). Order: Home · Story · Work · **Experience** · Now · Notes · Field Notes · Archive · Contact. The overlay count is hidden at zero (so it shows no "N filed" while private, "5 filed" in preview).
+- **Story link:** a restrained `All experience →` link sits at the foot of the Story annotation cluster (only when experiences resolve) — it **supplements**, never replaces, the per-experience annotations.
+- **Relationships:** `/experience` = chronological register · `/story` = autobiographical narrative · `/archive` = complete cross-type catalog · `/experience/[slug]` = full record. This separation is deliberate — do not collapse them.
+- **No homepage Experience section** was added (out of scope; revisit after publication once homepage density is assessed).
 
 ---
 
@@ -240,7 +255,8 @@ A **`linkedEvidence`** object (reusable; `experience.evidencePreviews[]`) is a *
 - ❌ Agency copy ("Book a call", "Let's work together", "Scale your brand"), sales language, availability indicators, response-time promises.
 - ❌ Dashboards, progress bars, streaks, gamification, fake real-time/metrics.
 - ❌ GSAP or any new animation/UI/map/carousel/state package.
-- ❌ New CMS schemas, new content types, new top-level nav routes, a **reading** detail route, a `/capabilities` page, or an **`/experience` index** page. *(The `/experience/[slug]` detail route exists as of Phase 5I-B — §16a — but there is deliberately no experience index and no header nav item.)*
+- ❌ New CMS schemas, new content types, a **reading** detail route, or a `/capabilities` page. *(The `/experience/[slug]` detail route exists as of Phase 5I-B — §16a; the `/experience` chronological **register** exists as of Phase 5I-D — §16c, reached via the Index — but there is still no header/utility nav item.)*
+- ❌ Turning `/experience` into a **CV / employment history / card grid / logo wall / skill-badge / résumé-timeline** page — it is a restrained chronological register (§16c). No "CURRENT"-style status pills for the current role either.
 - ❌ Redesigning the homepage, Ledger Sort, Index, or Work template.
 - ❌ Raw camelCase enum values in the UI; duplicated label maps; passing CMS prose through `MetaLine`.
 - ❌ Fetching Sanity in the browser; bypassing `archiveFetch`; publishing placeholder documents; fabricating content to fill empty states.

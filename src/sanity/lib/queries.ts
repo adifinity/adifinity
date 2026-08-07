@@ -421,6 +421,27 @@ export const EXPERIENCE_DETAIL_QUERY = defineQuery(`
   }
 `)
 
+// The Experience landing register — the chronological index at
+// /experience. Ordered by factual start date ascending (earliest →
+// current), so the page reads as a formation, not a résumé. Fetches only
+// what a row needs to orient and decide; the full record lives at the
+// detail route. Same editorial gate: public sees published+public only,
+// preview sees the drafts.
+export const EXPERIENCE_INDEX_QUERY = defineQuery(`
+  *[_type == "experience" && ${PUBLIC_ENTRY_FILTER}]
+    | order(coalesce(dateRange.startDate, _createdAt) asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    phase,
+    organisation,
+    roleTitle,
+    "experienceType": type,
+    dateRange
+  }
+`)
+
 // Route metadata only — kept light, like the other *_META queries.
 export const EXPERIENCE_META_QUERY = defineQuery(`
   *[_type == "experience" && slug.current == $slug && ${PUBLIC_ENTRY_FILTER}][0]{
@@ -839,6 +860,21 @@ export type ExperienceMetaPayload = {
   roleTitle: string | null
   organisation: string | null
   summary: string | null
+}
+
+// One row on the /experience chronological register — a preview, not the
+// record. Detail-only fields (narrative, metrics, evidence, files) are
+// deliberately absent.
+export type ExperienceListItem = {
+  _id: string
+  title: string | null
+  slug: string | null
+  summary: string | null
+  phase: string | null
+  organisation: string | null
+  roleTitle: string | null
+  experienceType: string | null
+  dateRange: DateRangeValue | null
 }
 
 export type StoryCapability = {

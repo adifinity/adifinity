@@ -11,6 +11,7 @@ const INDEX_SECTIONS = [
   {href: '/', label: 'Home'},
   {href: '/story', label: 'Story'},
   {href: '/work', label: 'Work'},
+  {href: '/experience', label: 'Experience'},
   {href: '/now', label: 'Now'},
   {href: '/notes', label: 'Notes'},
   {href: '/field-notes', label: 'Field Notes'},

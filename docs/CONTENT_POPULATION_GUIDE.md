@@ -73,17 +73,20 @@ Field notes are **evidence from places**, not travel content. The `observation` 
 
 ---
 
-## 4. Experience (`experience`) → Story margin, Archive, **`/experience/[slug]`**
+## 4. Experience (`experience`) → **`/experience`**, `/experience/[slug]`, Story margin, Archive
 
-**Has a detail page** since Phase 5I-B: `/experience/[slug]`. Discovered through the **Story margin** ("Annotations", now clickable) and **Archive** records (now clickable) — there is **no `/experience` index and no header nav item**. It opens like a referenced archival record, not a résumé entry.
+**Has a landing register** since Phase 5I-D: **`/experience`** (a chronological register, reached from the **Index** — Home · Story · Work · **Experience** · …), plus the **detail page** `/experience/[slug]` (since 5I-B). **Three discovery doorways, all kept:** (1) the `/experience` register, (2) the **Story margin** ("Annotations", clickable), (3) **Archive** records (clickable). There is still **no header/utility nav item**. It opens like a referenced archival record, not a résumé entry.
 
 **Required:** `title` · `slug` · `organisation` · `roleTitle` · `dateRange` · `type` (Institution / Leadership / Education / Practice) · `status` · `visibility` · `phase`.
 
-**To appear:** published + public. Story lists experiences **chronologically (oldest → newest)** by start date — a formation timeline.
+**To appear publicly:** published + public — on **both** `/experience` and the detail page. While all records are draft/private, `/experience` shows an honest empty state (**200, not 404**); publishing them surfaces them automatically with no code change.
+
+**Ordering — chronological, by factual date:** both `/experience` and the Story margin sort experiences **ascending by `dateRange.startDate`** (earliest → current) — a *formation*, not reverse-chron résumé order. The sequence is driven entirely by the start dates, so **if the order looks wrong, fix the dates in the Studio — never expect a manual/publish/creation order.** An ongoing record (no `endDate`, `isOngoing`) with `phase: current` sorts by its start date and reads as the current chapter.
 
 **`title` vs `roleTitle` (important):** `title` = the archival identity of the record (e.g. "WACMUN 2024", "DRMCMUNA — Presidency"); `roleTitle` = your role inside it (e.g. "Deputy Secretary General · Chair, ICJ", "President"). Don't repeat the role in both — the detail page shows title as the headline and roleTitle beneath it.
 
 **Where each field renders:**
+- **Register row (`/experience`):** meta line (`X · type · date-range · phase`), `title`, `roleTitle — organisation`, `summary`, "View record →". **Preview only, not the record** — no `narrativeBody`, `metrics`, `evidenceFiles`, `evidencePreviews`, or `coverMedia` here. Write a `summary` that orients in one or two sentences; the whole row links into the detail page. `phase: current` reads as a quiet "Current" label — nothing more.
 - **Story annotation:** `title`, `roleTitle` — `organisation`, `dateRange` · `phase` (compact).
 - **Archive record:** `title`, `summary`, `organisation` — `roleTitle`, catalog meta.
 - **Detail page (`/experience/[slug]`):** everything — `summary` (lede), `coverMedia` (Fig. 1 plate; needs alt), `narrativeBody` (prose, not bullet résumé lines), `verifiedFacts` (renders as **"On the record"** — short checkable statements, *not* badges), `metrics` (**"In numbers"** — label + value + optional note), and a margin rail: `websiteUrl` + **`externalLinks`** (Elsewhere), **`evidenceFiles`** (Evidence — downloadable study guides/certificates/appointment material, human titles), `relatedWork` (→ Work), `relatedEntries` (cross-references).

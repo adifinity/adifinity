@@ -3,7 +3,24 @@
 _Live project tracker for populating the Adifinity archive with real content and
 preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
 
-**Latest activity — Phase 5I-C (2026-08-08):** wrote the **five real Experience
+**Latest activity — Phase 5I-D (2026-08-08):** **Experience is now a first-class
+accessible destination** (code/navigation only — no CMS mutations). Added the
+**`/experience` landing register** (`src/app/(site)/experience/page.tsx`, a
+chronological register ordered by `dateRange.startDate` ascending, via a dedicated
+`EXPERIENCE_INDEX_QUERY` + `ExperienceListItem`), and added **Experience** as a
+top-level entry in **both** the overlay Index (`site-index.tsx`) and the no-JS
+footer Index (`site-footer.tsx`), placed after Work — order: Home · Story · Work ·
+**Experience** · Now · Notes · Field Notes · Archive · Contact. A restrained
+`All experience →` link was added to the foot of the Story annotation cluster
+(supplement, not replacement). Experience now has **three discovery doorways**
+(register, Story annotation, Archive) — all intentional and kept. **The five
+Experience drafts remain draft / private / NOT published**; `/experience` shows an
+honest **200 empty state** publicly and will surface them automatically once
+published (no code change). **Story prose (`longBio`) unchanged; GHOROA unchanged;
+Capabilities and Current Updates untouched.** `tsc`/`eslint`/`build` pass; no
+regressions. Not pushed, not merged. See §13.
+
+**Earlier — Phase 5I-C (2026-08-08):** wrote the **five real Experience
 drafts** (all **draft / private — NOT published**), transaction
 `ELYHRmWtP4iGWsbqfPuZbB`. The placeholder `fcd561ad…` was **repurposed in place**
 into **WACMUN 2024** (UUID preserved). New UUIDs: **DRMCMUNA — Academics**
@@ -573,3 +590,37 @@ countries / 6 committees); (c) **approve the IBA rank wording** — "Merit 4th" 
 currently image-only; (d) select which DRMCMUN study guides you authored (none
 uploaded yet); (e) the ICJ PDF could not be render-verified here (Spotlight reports
 79 pages vs the attachment tool's 14 — confirm it is the intended final file).
+
+**Phase 5I-D (2026-08-08) — Experience index + global Index access (CODE / NAV only):**
+No CMS documents were created, edited, published, or deleted. The five Experience
+drafts are **byte-for-byte unchanged** and still draft / private / not published
+(re-verified read-only: 0 published, 0 public, chronological order intact).
+
+| File | Change |
+|------|--------|
+| `src/sanity/lib/queries.ts` | +`EXPERIENCE_INDEX_QUERY` (gated; `order(coalesce(dateRange.startDate, _createdAt) asc)`; landing fields only) +`ExperienceListItem` type. No existing query/type touched. |
+| `src/app/(site)/experience/page.tsx` | **new** `/experience` register (Server Component; `archiveFetch` + gate + `SanityLive` + Draft-Mode block; `EmptyNote` honest empty state; Static `○`). |
+| `src/components/site-index.tsx` | +`{ label: 'Experience', href: '/experience', count: counts?.experiences }` after Work. No overlay/focus/scroll/keyboard behaviour changed. |
+| `src/components/site-footer.tsx` | +`{ href: '/experience', label: 'Experience' }` after Work (no-JS footer Index parity). |
+| `src/app/(site)/story/page.tsx` | + restrained `All experience →` link at the foot of the annotations cluster (only when experiences resolve). **`longBio` prose untouched.** |
+| docs | handoff §12/§16a/§16c/§18, guide §4, this file. |
+
+**5I-D verification:** `tsc`=0, `eslint`=0, `next build`=success (`/experience`
+Static `○`, `/experience/[slug]` still Dynamic `ƒ`, `/story` still Static). Public
+(dev): `/experience` **200** honest empty state (0 console errors); `/experience/
+nonexistent` **and** `/experience/wacmun-2024` (a real draft slug) → **404** (no
+leak); `/`, `/story`, `/archive`, `/work`, `/work/ghoroa-nourish-proposal`, `/now`,
+`/notes`, `/field-notes`, `/contact` all **200**; no draft-experience titles on
+`/story` or `/archive`; the Story `All experience →` link correctly **hidden**
+publicly (0 public experiences); homepage **GHOROA Featured Current Entry + Selected
+Work intact**. **Index:** the hydrated overlay and the server-rendered footer both
+list **Experience → /experience** in order Home · Story · Work · Experience · Now ·
+Notes · Field Notes · Archive · Contact. **Preview data-layer** (`EXPERIENCE_INDEX_
+QUERY` with `$preview=true`, read-only): returns the **five in chronological order**
+(Academics → WACMUN → YAF → Presidency → IBA); public returns **0**. No horizontal
+overflow at 375 / 768 / desktop; one `h1` on `/experience`. **Manual (needs Adi's
+Studio auth):** the Draft-Mode *visual* of `/experience` (five rows, click-through to
+each `/experience/[slug]`, click-to-edit) — the verification pane cannot authenticate
+Presentation, and its rAF clock is suspended (`visibilityState: hidden`), so the
+overlay open-animation and Draft-Mode render are the two things left to eyeball.
+Nothing published; nothing merged.

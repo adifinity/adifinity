@@ -106,6 +106,7 @@ export function SiteIndex({ data }: { data: IndexPayload }) {
     { label: 'Home', href: '/' },
     { label: 'Story', href: '/story' },
     { label: 'Work', href: '/work', count: counts?.work },
+    { label: 'Experience', href: '/experience', count: counts?.experiences },
     { label: 'Now', href: '/now', count: counts?.updates },
     { label: 'Notes', href: '/notes', count: counts?.notes },
     { label: 'Field Notes', href: '/field-notes', count: counts?.fieldNotes },
