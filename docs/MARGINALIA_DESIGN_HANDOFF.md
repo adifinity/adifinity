@@ -200,6 +200,10 @@ Draft-mode enable/disable routes · `sanityFetch` · `archiveFetch` · `SanityLi
 
 **Data flow law:** every CMS read goes through `archiveFetch` (which resolves `$preview` from Draft Mode); the editorial gate lives **inside the GROQ**. Never fetch Sanity in the browser. Never bypass `archiveFetch`. Public HTML must contain zero draft content.
 
+**Gated-deref rule (two-part, both mandatory):** when filtering a dereferenced array,
+(1) **parenthesise** the deref+project so the filter binds to the array, not each object — `(x[]->{…})[defined(_id) && <gate>]` (the `featuredWork`/`576d1b5` fix); **and**
+(2) **select every field the gate reads inside that projection** — `status`, `visibility` (and `active` for the capability branch). The trailing filter is evaluated against the *projected* object, so any gate field not selected reads as `null`, silently drops all items in public mode, and still passes in Draft Mode (because `$preview` short-circuits the gate) — so it escapes preview QA. `featuredWork`, `EXPERIENCE_DETAIL_QUERY.relatedWork`, and `RELATED_ENTRIES_PROJECTION` all follow this; keep new gated derefs consistent.
+
 ---
 
 ## 16a. Experience detail surface (added Phase 5I-B; discovery updated Phase 5I-D)

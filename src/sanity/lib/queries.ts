@@ -267,7 +267,12 @@ const RELATED_ENTRIES_PROJECTION = /* groq */ `(relatedEntries[]->{
       roleTitle,
       "experienceType": type,
       "capabilityName": name,
-      "capabilityPhase": phase
+      "capabilityPhase": phase,
+      // Gate fields must be projected before the trailing filter can read them
+      // (the filter runs against the projected object, not the source doc).
+      status,
+      visibility,
+      active
     })[defined(_id) && ($preview || (_type == "capability" && active == true) || (status == "published" && visibility == "public"))]`
 
 // The definitive Work entry. Every field is real schema; related
@@ -415,7 +420,9 @@ export const EXPERIENCE_DETAIL_QUERY = defineQuery(`
       "slug": slug.current,
       summary,
       dateRange,
-      primaryCategory
+      primaryCategory,
+      status,
+      visibility
     })[defined(_id) && ${PUBLIC_ENTRY_FILTER}],
     "relatedEntries": ${RELATED_ENTRIES_PROJECTION}
   }
@@ -754,6 +761,10 @@ export type RelatedEntry = {
   experienceType: string | null
   capabilityName: string | null
   capabilityPhase: string | null
+  // Gate fields — selected so the editorial filter can evaluate them; not rendered.
+  status: string | null
+  visibility: string | null
+  active: boolean | null
 }
 
 export type WorkDetailPayload = {

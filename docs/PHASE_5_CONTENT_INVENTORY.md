@@ -15,22 +15,14 @@ shows 5 annotations + "All experience →"; `/archive` shows 5 records; homepage
 five in "From the archive" (Ledger Sort now armed) with GHOROA still Featured + Selected
 Work; no server errors; 375px no overflow. GHOROA + Site Settings unchanged.
 
-⚠️ **Two follow-ups surfaced by publishing (need your call — no code changed yet):**
-1. **Cross-reference rail is empty publicly** — a **pre-existing latent query bug** (same
-   class as the 5H `featuredWork` bug). `EXPERIENCE_DETAIL_QUERY.relatedWork` and
-   `RELATED_ENTRIES_PROJECTION` filter `status=="published" && visibility=="public"`
-   **after** a deref-projection that doesn't *select* `status`/`visibility`, so in public
-   mode they always resolve to `[]`. Effect: IBA→GHOROA, Presidency→Academics,
-   YAF→WACMUN "Related" links don't show publicly (they worked in Draft Mode because
-   `$preview` short-circuits the gate). Fix = add `status, visibility` (and `active` for
-   the capability branch) to those two projections, exactly as `featuredWork` already
-   does. Also affects Work/Notes/Field-note related-entries. **Awaiting authorization
-   (like 5I authorized the featuredWork fix).**
-2. **IBA rank appears as evidence-preview *text*** — the IBA `evidencePreview` states
-   "Merit 4th" in its `title` ("IBA Admission — Merit 4th"), `alt`, and `caption`, i.e. as
-   rendered text, not only inside the screenshot image. This is arguably beyond the
-   "visual-evidence-only, not a headline claim" decision (§8/5I-E). **Decide:** reword the
-   title/caption/alt to drop the rank number, or keep as-is.
+✅ **Both post-publication follow-ups RESOLVED (Phase 5I-G, 2026-08-08):**
+1. **Cross-reference query bug fixed** (code) — `EXPERIENCE_DETAIL_QUERY.relatedWork` and
+   `RELATED_ENTRIES_PROJECTION` now **select** `status`/`visibility` (and `active` for the
+   capability branch) so the trailing editorial gate can evaluate them, matching
+   `featuredWork`. Public now renders IBA→GHOROA, Presidency→Academics, YAF→WACMUN. Gate
+   unchanged → privacy preserved (verified: draft/private targets still excluded).
+2. **IBA evidence-preview copy cleaned** (CMS) — rank number removed from title/alt/caption;
+   screenshot + Facebook URL + source/platform preserved.
 
 **Earlier — Phase 5I-F (2026-08-08):** **Experience dates now display as
 intentionally coarse editorial years** (code only; stored CMS dates untouched). New helper **`formatExperiencePeriod`** (`src/lib/entry-meta.ts`)
@@ -761,3 +753,42 @@ no server errors (only dev HMR-socket/SanityLive-reconnect pane noise); 375px no
 overflow, one h1, 5 row links. **Two follow-ups (see the banner at the top): the
 public cross-reference query bug, and the IBA rank-in-caption wording.** No code
 changed; nothing merged; git untouched by the CMS write.
+
+**Phase 5I-G (2026-08-08) — related-content query repair + IBA copy cleanup (CODE + CMS):**
+Post-publication repair of the two follow-ups above. Both issues reproduced first.
+
+_Code (public related-content gate):_ the gate `(status=="published" && visibility=="public")`
+(and the capability branch `active==true`) was being evaluated against deref-projections
+that didn't **select** those fields → always `[]` in public mode (passed in Draft Mode via
+`$preview`). Fix mirrors `featuredWork`: select the gate fields in the projection.
+
+| File | Change |
+|------|--------|
+| `src/sanity/lib/queries.ts` | `RELATED_ENTRIES_PROJECTION`: +`status, visibility, active` in the deref projection. `EXPERIENCE_DETAIL_QUERY.relatedWork`: +`status, visibility`. `RelatedEntry` type: +`status`/`visibility`/`active`. Gate expression **unchanged**. |
+| `docs/MARGINALIA_DESIGN_HANDOFF.md` | §16 gated-deref rule (parenthesise **and** project the gate fields). |
+
+_CMS (IBA evidence-preview copy, `bae83bb3…`):_ single `.set(evidencePreviews)` patch,
+`ifRevisionID` guard `ELYHRmWtP4iGWsbqfPwcNZ` → new rev **`ELYHRmWtP4iGWsbqfPwgWD`**; still
+published/public, same UUID, same asset `image-16e4d565…`, same FB URL, source/platform
+preserved; narrative/verifiedFacts/metrics/relatedWork untouched; other four experiences
+unmutated (rev `…PwcNZ`).
+
+| Field | Before | After |
+|-------|--------|-------|
+| title | "IBA Admission — Merit 4th" | "IBA BBA 34th Batch Admission" |
+| caption | "…marking **Merit 4th** in admission…" | "Official DRMCMUNA announcement marking my admission to the Institute of Business Administration, University of Dhaka." |
+| alt | "…congratulating … on securing **Merit 4th** …" | "Official DRMCMUNA congratulatory graphic for Raiyan Sadi Aditya's admission to the IBA BBA 34th batch." |
+| credit | (unset) | "DRMC Model United Nations Association" |
+
+**5I-G verification:** `tsc`=0, `eslint`=0, `next build`=success (routes unchanged). Fixed
+projections (public perspective) resolve IBA→GHOROA, Presidency→Academics, YAF→WACMUN — all
+targets published/public; **privacy preserved** (mixed gate test: GHOROA passes, draft/private
+note/reading/work/fieldNote all excluded, no routable-draft leak; capability branch = active
+non-routable labels by design). Rendered public: the three "Related"/"In the margin" links
+appear with correct routes; IBA evidence shows "IBA BBA 34th Batch Admission" with **no**
+"Merit 4th"/"11,147" and the FB URL intact; `/work/ghoroa` + `/notes` + `/field-notes` 200
+(no 500, no `[null]`). Experience regression: `/experience` 5 chronological, all detail 200,
+`/story` 5 + link, `/archive` 5, homepage GHOROA Featured/Selected Work + fragments + Ledger
+Sort intact. A11y/responsive (375/768/1280): no overflow, one h1, related links are single
+semantic `<a>` (0 nested), keyboard-focusable, meaningful names. No console/server errors.
+Nothing merged; nothing unpublished.

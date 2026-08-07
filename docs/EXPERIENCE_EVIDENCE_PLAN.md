@@ -65,8 +65,8 @@ All five matched confidently — **no pending mappings.**
 
 ### Institute of Business Administration — `bae83bb3-…`
 - **Verified & populated:** BBA Student, University of Dhaka; type `education`, phase **`current`** (start `2025-01-01`, ongoing). **Relation:** → GHOROA (relatedWork).
-- **Linked visual evidence:** IBA Merit-4th post (FB, above).
-- **Rank — FINAL decision (5I-E):** "Merit 4th" stays **visual evidence only** (inside the linked FB preview image). **Not** added to summary, narrativeBody, verifiedFacts, or metrics. **"11,147 candidates" / national-ranking / admission-performance prose — omitted entirely** (appears in no source). The record stays centred on entering IBA, the field change, business education, and current direction toward finance & strategy — **not** an admission-results page. IBA has **no metrics** (confirmed 5I-E).
+- **Linked visual evidence:** IBA admission post (FB, above). Evidence-preview copy (5I-G): title **"IBA BBA 34th Batch Admission"**, caption "Official DRMCMUNA announcement marking my admission to the Institute of Business Administration, University of Dhaka.", alt "Official DRMCMUNA congratulatory graphic for Raiyan Sadi Aditya's admission to the IBA BBA 34th batch.", credit/source "DRMC Model United Nations Association". The screenshot (which visibly shows the historical announcement) + the Facebook URL are unchanged.
+- **Rank — FINAL (5I-E decision, 5I-G copy cleanup):** the rank number lives **only inside the screenshot image**; it appears in **no** rendered text — not summary, narrativeBody, verifiedFacts, metrics, **title, caption, or alt** (5I-G removed the earlier "Merit 4th" wording from title/alt/caption). **"11,147" appears nowhere.** The record stays centred on entering IBA, the field change, business education, and direction toward finance & strategy — **not** an admission-results page. IBA has **no metrics**.
 - **Publication gates:** exact IBA start month (encoded Jan 2025 — confirm). Rank question **closed**.
 
 ## Cross-cutting held / private
@@ -82,13 +82,12 @@ All five Experience records are now **published / public** (transaction
 `2025–present`); metrics, evidence files, evidence previews, and the register/detail/
 Story/Archive surfaces all render publicly. Stored ISO dates unchanged.
 
-**Two open follow-ups (surfaced by publishing; no code changed):**
-1. **Public cross-reference rail is empty** — a latent bug in
-   `EXPERIENCE_DETAIL_QUERY.relatedWork` + `RELATED_ENTRIES_PROJECTION`: the gate filters
-   on `status`/`visibility` that the deref-projection doesn't select, so public mode
-   returns `[]` (worked in Draft Mode via `$preview`). IBA→GHOROA, Presidency→Academics,
-   YAF→WACMUN links don't show publicly until fixed (add `status, visibility` to those
-   projections, like `featuredWork`). Awaiting authorization.
-2. **IBA rank in evidence-preview text** — the IBA `evidencePreview` title/alt/caption
-   state "Merit 4th" as rendered text (not only inside the image). Decide whether to
-   reword (drop the rank number) to match the "visual-evidence-only" intent, or keep.
+**Both follow-ups now RESOLVED (Phase 5I-G, 2026-08-08):**
+1. ✅ **Public cross-reference rail fixed** — added the gate fields (`status`, `visibility`,
+   and `active`) to `EXPERIENCE_DETAIL_QUERY.relatedWork` and `RELATED_ENTRIES_PROJECTION`,
+   matching `featuredWork`. Public now renders IBA→GHOROA (Related work),
+   Presidency→Academics and YAF→WACMUN (In the margin). Gate unchanged → privacy preserved
+   (draft/private targets still excluded; verified).
+2. ✅ **IBA evidence-preview copy cleaned** — rank number removed from all rendered text
+   (title/alt/caption); screenshot, Facebook URL, source, and platform preserved. See §
+   IBA below. "Merit 4th"/"11,147" appear in **no** field of any Experience.
