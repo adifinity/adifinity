@@ -3,9 +3,37 @@
 _Live project tracker for populating the Adifinity archive with real content and
 preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
 
-**Latest activity — Phase 5I-F (2026-08-08):** **Experience dates now display as
-intentionally coarse editorial years** (code only; stored CMS dates untouched; still
-**not published**). New helper **`formatExperiencePeriod`** (`src/lib/entry-meta.ts`)
+**Latest activity — Experience publication (2026-08-08):** **the five Experience
+records are now PUBLISHED** (`status: published` / `visibility: public`), transaction
+`ELYHRmWtP4iGWsbqfPwcNZ` — drafts consumed, 0 drafts remain, 0 unrelated docs touched.
+Published (bare UUIDs, staggered `publishedAt` in formation order): Academics
+`5f35a12a…`, WACMUN `fcd561ad…`, YAF `3f96bf50…`, Presidency `1c685bfd…`, IBA
+`bae83bb3…`. Public verified: `/experience` lists all five in chronological order with
+coarse dates (`2023–2024` / `Jun 2024` / `2024` / `2024–2025` / `2025–present`); each
+`/experience/[slug]` **200** with metrics + evidence files + evidence previews; `/story`
+shows 5 annotations + "All experience →"; `/archive` shows 5 records; homepage shows all
+five in "From the archive" (Ledger Sort now armed) with GHOROA still Featured + Selected
+Work; no server errors; 375px no overflow. GHOROA + Site Settings unchanged.
+
+⚠️ **Two follow-ups surfaced by publishing (need your call — no code changed yet):**
+1. **Cross-reference rail is empty publicly** — a **pre-existing latent query bug** (same
+   class as the 5H `featuredWork` bug). `EXPERIENCE_DETAIL_QUERY.relatedWork` and
+   `RELATED_ENTRIES_PROJECTION` filter `status=="published" && visibility=="public"`
+   **after** a deref-projection that doesn't *select* `status`/`visibility`, so in public
+   mode they always resolve to `[]`. Effect: IBA→GHOROA, Presidency→Academics,
+   YAF→WACMUN "Related" links don't show publicly (they worked in Draft Mode because
+   `$preview` short-circuits the gate). Fix = add `status, visibility` (and `active` for
+   the capability branch) to those two projections, exactly as `featuredWork` already
+   does. Also affects Work/Notes/Field-note related-entries. **Awaiting authorization
+   (like 5I authorized the featuredWork fix).**
+2. **IBA rank appears as evidence-preview *text*** — the IBA `evidencePreview` states
+   "Merit 4th" in its `title` ("IBA Admission — Merit 4th"), `alt`, and `caption`, i.e. as
+   rendered text, not only inside the screenshot image. This is arguably beyond the
+   "visual-evidence-only, not a headline claim" decision (§8/5I-E). **Decide:** reword the
+   title/caption/alt to drop the rank number, or keep as-is.
+
+**Earlier — Phase 5I-F (2026-08-08):** **Experience dates now display as
+intentionally coarse editorial years** (code only; stored CMS dates untouched). New helper **`formatExperiencePeriod`** (`src/lib/entry-meta.ts`)
 renders: Academics **2023–2024** · WACMUN **Jun 2024** (fixes the old
 "Jun 2024 — Jun 2024") · YAF **2024** · Presidency **2024–2025** · IBA
 **2025–present**. Wired into all four Experience date surfaces — `/experience`
@@ -701,3 +729,35 @@ one manual check (needs Adi's Studio auth). Nothing published; nothing merged.
 **Note (out of scope):** GHOROA (a Work item) still shows the redundant
 "Jul 2026 — Jul 2026" because the single-month collapse is Experience-only by design;
 applying it to Work would be a separate, later decision.
+
+**Experience publication (2026-08-08) — five drafts PUBLISHED (CONTENT WRITE):**
+On explicit user instruction ("now publish the five experiences"), published all five
+via the authenticated CLI user session in a single atomic transaction
+`ELYHRmWtP4iGWsbqfPwcNZ` (raw perspective; pre-flight guard asserted 5 drafts, all
+draft/private/unpublished, 0 published). Each draft's content was preserved verbatim,
+`_id` moved from `drafts.<uuid>` → `<uuid>`, `status: 'published'`, `visibility:
+'public'`, and `publishedAt` set (staggered 1s apart in formation order so "recently
+filed" surfaces the current chapter first); the drafts were deleted in the same
+transaction. Cross-refs are safe: YAF→WACMUN and Presidency→Academics are weak refs;
+IBA→GHOROA is a strong ref and GHOROA is already published.
+
+| Date | Doc | Change | State |
+|------|-----|--------|-------|
+| 2026-08-08 | `5f35a12a…` Academics | draft → published/public; `publishedAt` 21:12:35Z | **Published** |
+| 2026-08-08 | `fcd561ad…` WACMUN | draft → published/public; `publishedAt` 21:12:36Z | **Published** |
+| 2026-08-08 | `3f96bf50…` YAF | draft → published/public; `publishedAt` 21:12:37Z | **Published** |
+| 2026-08-08 | `1c685bfd…` Presidency | draft → published/public; `publishedAt` 21:12:38Z | **Published** |
+| 2026-08-08 | `bae83bb3…` IBA | draft → published/public; `publishedAt` 21:12:39Z | **Published** |
+| 2026-08-08 | GHOROA · Site Settings · all others | **untouched** | unchanged |
+
+**Publication verification:** raw perspective → 0 drafts remain, 5 published; public
+perspective (app gate) → all 5 published/public with content intact (Academics 350+/8
++ 4 evidenceFiles + preview; WACMUN 146/5 + ICJ + preview; YAF 11 + preview; Presidency
++ preview; IBA + preview + strong relatedWork→GHOROA). Dev (fresh `.next`): every
+public route 200 incl. all five `/experience/[slug]`; register lists 5 in chronological
+order with coarse dates; `/story` 5 annotations + "All experience →"; `/archive` 5
+records; homepage 5 fragments + GHOROA Featured/Selected Work intact, Ledger Sort armed;
+no server errors (only dev HMR-socket/SanityLive-reconnect pane noise); 375px no
+overflow, one h1, 5 row links. **Two follow-ups (see the banner at the top): the
+public cross-reference query bug, and the IBA rank-in-caption wording.** No code
+changed; nothing merged; git untouched by the CMS write.

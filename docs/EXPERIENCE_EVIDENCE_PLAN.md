@@ -75,5 +75,20 @@ All five matched confidently — **no pending mappings.**
 - **DRMCMUN study guides — 4 of 9 now surfaced** (DISEC · NATO · US Cabinet · USSR Cabinet, per Adi's 5I-E selection); the other five (UNSC, IP, Historical WHO, European Union, Interim Government) intentionally not surfaced.
 - **Crimson Education** — deliberately **not** an Experience (Story/CV per 5I-A).
 
-## Global publication gate
-All five are **draft / private**. Evidence is now **locked** (5I-E) and dates now render as **coarse editorial years** (5I-F): Academics `2023–2024` · WACMUN `Jun 2024` · YAF `2024` · Presidency `2024–2025` · IBA `2025–present` — no false day-level precision, stored ISO dates unchanged. Remaining before any publish: teammate/co-founder name-display consent (Prisha Ahuja & Govind Khetpal already consented per your source; Ibtisam Mahe named factually from the official EC doc). The WACMUN metrics, study-guide selection, IBA-rank, and date-display questions are **resolved**. Next phase: **publication review**.
+## Publication status — PUBLISHED (2026-08-08)
+All five Experience records are now **published / public** (transaction
+`ELYHRmWtP4iGWsbqfPwcNZ`; drafts consumed). Dates render as coarse editorial years
+(Academics `2023–2024` · WACMUN `Jun 2024` · YAF `2024` · Presidency `2024–2025` · IBA
+`2025–present`); metrics, evidence files, evidence previews, and the register/detail/
+Story/Archive surfaces all render publicly. Stored ISO dates unchanged.
+
+**Two open follow-ups (surfaced by publishing; no code changed):**
+1. **Public cross-reference rail is empty** — a latent bug in
+   `EXPERIENCE_DETAIL_QUERY.relatedWork` + `RELATED_ENTRIES_PROJECTION`: the gate filters
+   on `status`/`visibility` that the deref-projection doesn't select, so public mode
+   returns `[]` (worked in Draft Mode via `$preview`). IBA→GHOROA, Presidency→Academics,
+   YAF→WACMUN links don't show publicly until fixed (add `status, visibility` to those
+   projections, like `featuredWork`). Awaiting authorization.
+2. **IBA rank in evidence-preview text** — the IBA `evidencePreview` title/alt/caption
+   state "Merit 4th" as rendered text (not only inside the image). Decide whether to
+   reword (drop the rank number) to match the "visual-evidence-only" intent, or keep.
