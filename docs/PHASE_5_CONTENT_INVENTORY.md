@@ -3,7 +3,23 @@
 _Live project tracker for populating the Adifinity archive with real content and
 preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
 
-**Latest activity — Phase 5H (2026-08-07):** **GHOROA is PUBLISHED** (status
+**Latest activity — Phase 5I-C (2026-08-08):** wrote the **five real Experience
+drafts** (all **draft / private — NOT published**), transaction
+`ELYHRmWtP4iGWsbqfPuZbB`. The placeholder `fcd561ad…` was **repurposed in place**
+into **WACMUN 2024** (UUID preserved). New UUIDs: **DRMCMUNA — Academics**
+`5f35a12a-4ba0-473f-89a4-f494bc7b87d1`, **DRMCMUNA — Presidency**
+`1c685bfd-a0b5-400f-acc8-07a68d19e357`, **Youth Affairs Forum**
+`3f96bf50-5f1b-4f89-adaf-180b3d524891`, **IBA** `bae83bb3-9c2f-4a4a-87c6-ece55d047559`.
+Six assets uploaded (5 evidence screenshots + the ICJ study-guide PDF). Metrics only
+where evidence supports them (Academics 350+/8, YAF core team 11); WACMUN scale
+metrics, the IBA rank, DRMCMUN study guides, registration sheets, and the EC-panel
+document are all **held/private**. Integrity confirmed: GHOROA + siteSettings revs
+unchanged, 0 published experiences, 0 Crimson, all `/experience/[slug]` → 404
+publicly, homepage GHOROA untouched. Full per-Experience state, held claims, and
+publication gates live in **[`docs/EXPERIENCE_EVIDENCE_PLAN.md`](EXPERIENCE_EVIDENCE_PLAN.md)**
+(the authoritative Experience tracker). See §13.
+
+**Earlier — Phase 5H (2026-08-07):** **GHOROA is PUBLISHED** (status
 `published` / visibility `public`; `publishedAt` 2026-08-06T21:24:45Z;
 `featuredOrder` 1; project date 2026-07-13 unchanged). It now resolves publicly
 as the homepage **Featured Current Entry**, appears first on `/work`, and its
@@ -139,12 +155,22 @@ Legend — Classification: **PLACEHOLDER** = must be replaced with real content 
 - **Referenced by:** nothing.
 - **Decision (§6):** keep as a real second Work entry only if genuine material exists; otherwise remove later.
 
-### experience — `drafts.fcd561ad-…-3656e667d2` — "Research Associate — Placeholder Institution"
-- **Classification:** PLACEHOLDER · draft/private/unreferenced (unchanged in 5I-B).
-- **Real signal:** `location` = "Dhaka, Bangladesh"; `dateRange` ongoing from 2024-01-01; `type` = `institution`; `phase` = `demonstrated`.
-- **Placeholder:** `title`, `organisation` ("Placeholder Institution"), `roleTitle`, `summary`, `narrativeBody`.
-- **Appears on:** Story margin, Archive, and now **`/experience/[slug]`** (detail surface built in 5I-B). Used only for 5I-B preview QA; **not** promoted to a real Experience.
-- **Phase 5I-A editorial set (pending 5I-C write):** DRMCMUNA Academics · WACMUN'24 · DRMCMUNA Presidency · Youth Affairs Forum · IBA (current). Crimson → Story/CV; reading/MUN-origin/IBA-transition → Story prose.
+### The five real Experience drafts (Phase 5I-C, 2026-08-08) — all **draft / private**
+Full per-Experience state, evidence, held claims, and publication gates live in
+**[`docs/EXPERIENCE_EVIDENCE_PLAN.md`](EXPERIENCE_EVIDENCE_PLAN.md)** (authoritative). Summary:
+
+| UUID | Experience | roleTitle | type / phase | Metrics | Held / private |
+|---|---|---|---|---|---|
+| `fcd561ad-…` *(repurposed placeholder)* | **WACMUN 2024** | Deputy SG · ICJ Chair | leadership / past | — (scale metrics held) | 239/37/6 unsupported by 146-row form |
+| `5f35a12a-…` | **DRMCMUNA — Academics** | Junior Rep · ASG Academics | leadership / past | Delegates **350+** · Committees **8** | 9 study guides (authored-selection pending) |
+| `1c685bfd-…` | **DRMCMUNA — Presidency** | President | leadership / past | — | EC-panel document (other students' PII) |
+| `3f96bf50-…` | **Youth Affairs Forum** | Co-Founder | leadership / past | Core team **11** | country count (source conflict) |
+| `bae83bb3-…` | **IBA** | BBA Student | education / **current** | — | **rank ("Merit 4th") — image only, wording approval pending** |
+
+- **Repurpose:** the ex-placeholder `fcd561ad…` became **WACMUN 2024** in place (UUID preserved; the old "Research Associate — Placeholder Institution" is fully retired). The other four are new drafts.
+- **Evidence uploaded:** 5 clickable screenshot previews (each links to its original IG/FB post — see the mapping table in the evidence plan) + the WACMUN ICJ study-guide PDF (no PII). Registration spreadsheets, study guides, and the EC-panel image were **not** uploaded (private / held).
+- **Appears on:** Story margin, Archive, and `/experience/[slug]` — but **only in Draft Mode**; all five are 404 publicly.
+- **Crimson Education:** deliberately **not** an Experience (Story/CV per 5I-A). Reading / MUN-origin / IBA-transition → Story prose.
 
 ### note — `drafts.2053a4bb-…-883a5c59c` — "this is part of notes that i will most likely use as a blog"
 - **Classification:** PLACEHOLDER (title is Adi's own scratch note).
@@ -509,3 +535,41 @@ Selected Work intact, `/work/ghoroa` 200, no placeholder leak, 0 dev-log errors)
 **Manual (Studio auth):** the *visual* render of an evidence preview (image
 clickable → original post; citation link; focus; responsive) — needs a real
 `linkedEvidence` item in Draft Mode. Placeholder untouched; nothing published.
+
+**Phase 5I-C (2026-08-08) — five real Experience drafts written (CONTENT WRITE):**
+Authorized CMS write of exactly five Experience records via the authenticated CLI
+user session (`sanity exec --with-user-token`; the `.env.local` token is read-only).
+Single transaction `ELYHRmWtP4iGWsbqfPuZbB`: 6 assets uploaded, then 5 experiences
+`createOrReplace`'d as **drafts** (`drafts.<uuid>`, no `publishedAt`,
+`status: draft`, `visibility: private`). The placeholder `fcd561ad…` was repurposed
+in place (UUID preserved). All held/private material listed in
+[`EXPERIENCE_EVIDENCE_PLAN.md`](EXPERIENCE_EVIDENCE_PLAN.md).
+
+| Date | Doc | Change | Draft/Published |
+|------|-----|--------|-----------------|
+| 2026-08-08 | 5 × `image-…` + 1 × `file-…-pdf` | Uploaded 5 evidence screenshots + WACMUN ICJ study-guide PDF (no PII) | assets |
+| 2026-08-08 | `drafts.fcd561ad…` | Placeholder → **WACMUN 2024** (Deputy SG · ICJ Chair; leadership/past; IG evidence preview + ICJ PDF; scale metrics **held**) | **Draft** |
+| 2026-08-08 | `drafts.5f35a12a…` | **DRMCMUNA — Academics** (ASG Academics; metrics 350+/8; FB evidence preview; study guides held) | **Draft** |
+| 2026-08-08 | `drafts.1c685bfd…` | **DRMCMUNA — Presidency** (President; GS Ibtisam Mahe; FB evidence preview; relatedEntry → Academics) | **Draft** |
+| 2026-08-08 | `drafts.3f96bf50…` | **Youth Affairs Forum** (Co-Founder; core team 11; IG preview + website + team link; relatedEntry → WACMUN) | **Draft** |
+| 2026-08-08 | `drafts.bae83bb3…` | **IBA** (BBA Student; education/current; FB preview; relatedWork → GHOROA; **rank held out of text**) | **Draft** |
+| 2026-08-08 | `siteSettings`, `4eb5c9c8…` (GHOROA) | **Untouched** (revs `ELYHRmWtP4iGWsbqfPisYe` / `G2blyWsrpd4FcYBaehS2Wa` unchanged) | Published (unchanged) |
+
+**5I-C verification:** transaction committed; 5 experiences exist, **0 published**,
+**0 Crimson**, GHOROA + siteSettings revs unchanged. Public perspective: all five
+`/experience/[slug]` → **404**; `/story` shows 0 new experience annotations;
+`/archive` shows 0 experience records; homepage GHOROA Featured Current Entry +
+Selected Work still render (count 2). Metrics applied only where evidence supports
+(Academics 350+/8, YAF 11); WACMUN/Presidency/IBA no metrics. IBA rank held out of
+verifiedFacts/narrative (appears only inside the FB evidence-preview image, pending
+wording approval). **Manual (needs Studio auth):** the Presentation *visual* of each
+`/experience/[slug]` in Draft Mode (evidence images clickable → original posts;
+citations; metrics; relations). Nothing published; nothing merged.
+
+**Publication gates before any Experience can go public** (see the evidence plan for
+the per-record detail): (a) confirm all approximate dateRanges; (b) decide the WACMUN
+scale metrics (the 146-row application form does **not** support 239 delegates / 37
+countries / 6 committees); (c) **approve the IBA rank wording** — "Merit 4th" is
+currently image-only; (d) select which DRMCMUN study guides you authored (none
+uploaded yet); (e) the ICJ PDF could not be render-verified here (Spotlight reports
+79 pages vs the attachment tool's 14 — confirm it is the intended final file).
