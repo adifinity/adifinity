@@ -38,14 +38,14 @@ const ROUTE_BASE: Partial<Record<ArchiveEntry['_type'], string>> = {
   workItem: '/work',
   note: '/notes',
   fieldNote: '/field-notes',
+  experience: '/experience',
 }
 
 // Archive — the complete catalogue. The full gated result set is
 // assembled here on the server (facets included); the client island
-// only filters what it was given. Experience and reading entries are
-// deliberately non-clickable records: neither carries enough standalone
-// body to justify a destination page, and neither is in the approved
-// sitemap.
+// only filters what it was given. Experience records open at
+// /experience/[slug]; reading entries remain deliberately non-clickable
+// (a record, not a destination — outside the approved sitemap).
 export default async function ArchivePage() {
   const { data } = await archiveFetch({ query: ARCHIVE_QUERY })
   const raw = (data as ArchiveEntry[] | null) ?? []

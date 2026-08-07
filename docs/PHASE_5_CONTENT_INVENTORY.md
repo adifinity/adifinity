@@ -10,11 +10,18 @@ as the homepage **Featured Current Entry**, appears first on `/work`, and its
 detail page (cover, 5 plates, PDF + PPTX downloads, collaborators, credits)
 renders correctly.
 
-**Phase 5I (2026-08-07):** ✅ **fixed the `featuredWork` query defect** (a one-token
-parenthesis change in `SITE_SETTINGS_QUERY`) and re-enabled `featuredWork = [GHOROA]`.
-Homepage now shows GHOROA in **Selected Work** (once). `tsc` / `eslint` / `next build`
-all pass. This is the first **code** change in the 5-series (the only one so far).
-See the resolved-defect note below and §13.
+**Phase 5I-B (2026-08-07):** built the **Experience detail surface** —
+`/experience/[slug]` (a first-class but restrained archival record; discovered via
+now-clickable Story annotations + Archive records; no index, no nav item). Added
+`EXPERIENCE_DETAIL_QUERY`/`_META_QUERY`, a minimal schema extension (`externalLinks`
++ `evidenceFiles`, reusing existing objects), and fixed the latent
+`RELATED_ENTRIES_PROJECTION` precedence bug. Story experiences now sort
+chronologically (oldest→newest). `tsc`/`eslint`/`build` pass; no regressions. **The
+five real Experience records are NOT written yet** (Phase 5I-C). Placeholder
+`drafts.fcd561ad…` remains draft/private/unreferenced. See §13.
+
+_Earlier — Phase 5I (2026-08-07):_ ✅ fixed the `featuredWork` query defect (a
+one-token parenthesis in `SITE_SETTINGS_QUERY`) and re-enabled `featuredWork = [GHOROA]`.
 
 _Earlier — Phase 5G (2026-08-07):_ added cover (slide 9), 5-slide gallery, and a
 36-page PDF; `socialPreviewImage` left empty.
@@ -124,10 +131,11 @@ Legend — Classification: **PLACEHOLDER** = must be replaced with real content 
 - **Decision (§6):** keep as a real second Work entry only if genuine material exists; otherwise remove later.
 
 ### experience — `drafts.fcd561ad-…-3656e667d2` — "Research Associate — Placeholder Institution"
-- **Classification:** PLACEHOLDER.
+- **Classification:** PLACEHOLDER · draft/private/unreferenced (unchanged in 5I-B).
 - **Real signal:** `location` = "Dhaka, Bangladesh"; `dateRange` ongoing from 2024-01-01; `type` = `institution`; `phase` = `demonstrated`.
 - **Placeholder:** `title`, `organisation` ("Placeholder Institution"), `roleTitle`, `summary`, `narrativeBody`.
-- **Appears on:** Story margin, Archive.
+- **Appears on:** Story margin, Archive, and now **`/experience/[slug]`** (detail surface built in 5I-B). Used only for 5I-B preview QA; **not** promoted to a real Experience.
+- **Phase 5I-A editorial set (pending 5I-C write):** DRMCMUNA Academics · WACMUN'24 · DRMCMUNA Presidency · Youth Affairs Forum · IBA (current). Crimson → Story/CV; reading/MUN-origin/IBA-transition → Story prose.
 
 ### note — `drafts.2053a4bb-…-883a5c59c` — "this is part of notes that i will most likely use as a blog"
 - **Classification:** PLACEHOLDER (title is Adi's own scratch note).
@@ -449,3 +457,26 @@ Current Entry; no `_id`-null error in dev log; `/work` + detail unchanged (PDF/P
 intact); Ledger Sort still inactive. **`tsc --noEmit` = 0, `eslint` = 0,
 `next build` = success** (homepage prerendered Static without crash). Draft-Mode
 click-to-edit of `featuredWork` = a manual check (pane can't authenticate Presentation).
+
+**Phase 5I-B (2026-08-07) — Experience detail surface (code + schema + docs):**
+
+| File | Change |
+|------|--------|
+| `src/sanity/schemaTypes/documents/experienceType.ts` | +`externalLinks` (array of `externalLink`) +`evidenceFiles` (array of `fileDownload`); `websiteUrl` retained; nothing removed/renamed |
+| `src/sanity/lib/queries.ts` | Fixed `RELATED_ENTRIES_PROJECTION` precedence (parenthesised, like 576d1b5); added `EXPERIENCE_DETAIL_QUERY` + `EXPERIENCE_META_QUERY` (+ `MetricValue`/`ExperienceDetailPayload`/`ExperienceMetaPayload` types); `STORY_QUERY` experiences: added `slug`, order `desc`→**`asc`** (chronological) |
+| `src/app/(site)/experience/[slug]/page.tsx` | **new** detail route (Server Component; `archiveFetch`+gate+`SanityLive`+Draft Mode; `notFound()`; dynamic `ƒ`, no static params) |
+| `src/app/(site)/story/page.tsx` | Annotations wrapped in `Link` → `/experience/[slug]` when slug resolves (compact design preserved; keyboard/hover a11y) |
+| `src/app/(site)/archive/page.tsx` | `ROUTE_BASE` += `experience: '/experience'` (records now clickable) |
+| `src/components/related-entries.tsx` | `ROUTE_BASE` += `experience` (experience cross-refs now link) |
+| docs | handoff §16a, guide §4, this file |
+
+**5I-B verification:** `EXPERIENCE_DETAIL_QUERY` resolves the placeholder in
+**preview** (all fields; parenthesised relatedWork/relatedEntries return cleanly),
+returns **null** in **public**. `tsc`=0, `eslint`=0, `next build`=success
+(`ƒ /experience/[slug]` registered; `/story`,`/archive` still Static). Public:
+`/`,`/story`,`/archive` 200; `/experience/nonexistent` and the draft placeholder
+→ **404**; placeholder absent from Story/Archive. **No regression:** GHOROA
+Featured Current Entry + Selected Work intact, `/work/ghoroa` 200, 0 dev-log
+errors, featuredWork repair unchanged. **Manual (needs Studio auth):** the
+preview *visual* of `/experience/[placeholder-slug]` + clickable annotation.
+No Experience published; placeholder untouched.

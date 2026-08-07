@@ -78,23 +78,39 @@ export default async function StoryPage() {
             <h2 className="font-mono text-meta uppercase text-graphite">Annotations</h2>
             {experiences.length > 0 ? (
               <ul className="mt-1">
-                {experiences.map((experience) => (
-                  <li key={experience._id} className="border-b border-rule py-3 last:border-b-0">
-                    <p className="font-mono text-meta uppercase text-graphite">
-                      {[formatDateRange(experience.dateRange), phaseLabel(experience.phase)]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </p>
-                    <p className="mt-1 font-serif text-caption text-ink">{experience.title}</p>
-                    {(experience.roleTitle || experience.organisation) && (
-                      <p className="mt-1 font-serif text-caption italic text-graphite">
-                        {experience.roleTitle}
-                        {experience.roleTitle && experience.organisation && ' — '}
-                        {experience.organisation}
+                {experiences.map((experience) => {
+                  const slug = clean(experience.slug)
+                  const inner = (
+                    <>
+                      <p className="font-mono text-meta uppercase text-graphite">
+                        {[formatDateRange(experience.dateRange), phaseLabel(experience.phase)]
+                          .filter(Boolean)
+                          .join(' · ')}
                       </p>
-                    )}
-                  </li>
-                ))}
+                      <p className="mt-1 font-serif text-caption text-ink transition-colors group-hover:text-annotation">
+                        {experience.title}
+                      </p>
+                      {(experience.roleTitle || experience.organisation) && (
+                        <p className="mt-1 font-serif text-caption italic text-graphite">
+                          {experience.roleTitle}
+                          {experience.roleTitle && experience.organisation && ' — '}
+                          {experience.organisation}
+                        </p>
+                      )}
+                    </>
+                  )
+                  return (
+                    <li key={experience._id} className="border-b border-rule py-3 last:border-b-0">
+                      {slug ? (
+                        <Link href={`/experience/${slug}`} className="group block">
+                          {inner}
+                        </Link>
+                      ) : (
+                        inner
+                      )}
+                    </li>
+                  )
+                })}
               </ul>
             ) : (
               <p className="mt-3 font-serif text-caption italic text-graphite">

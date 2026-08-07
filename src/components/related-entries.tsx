@@ -7,10 +7,10 @@ import type { ArchiveFragment, RelatedEntry } from '@/sanity/lib/queries'
 // Related entries as authored marginalia — cross-references in the
 // margin's voice, not a "related posts" grid. Each reference carries an
 // editorial lead-in chosen by type, the entry's title, and its catalog
-// context. workItem, note and fieldNote link to their public routes;
-// readingEntry and experience are contextual records (no standalone
-// pages by design), and capability stays connective: a restrained label
-// with its honest Current/Emerging state, never a destination.
+// context. workItem, note, fieldNote and experience link to their public
+// routes; readingEntry is a contextual record (no standalone page by
+// design), and capability stays connective: a restrained label with its
+// honest Current/Emerging state, never a destination.
 
 const LEAD_INS: Record<RelatedEntry['_type'], string> = {
   workItem: 'this connects to—',
@@ -25,6 +25,7 @@ const ROUTE_BASE: Partial<Record<RelatedEntry['_type'], string>> = {
   workItem: '/work',
   note: '/notes',
   fieldNote: '/field-notes',
+  experience: '/experience',
 }
 
 function contextLine(entry: RelatedEntry): string {

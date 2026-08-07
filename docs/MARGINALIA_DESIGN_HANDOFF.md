@@ -124,7 +124,7 @@ Lead-ins by type (authored voice — keep these):
 - experience → `the institution behind this—`
 - capability → `capability exercised—`
 
-**Link resolution:** workItem→`/work/[slug]`, note→`/notes/[slug]`, fieldNote→`/field-notes/[slug]` (these get a hover affordance). readingEntry, experience, capability are **non-clickable contextual records** (no standalone routes by design). `currentUpdate` is never a related-entry target. **Never render a broken link.**
+**Link resolution:** workItem→`/work/[slug]`, note→`/notes/[slug]`, fieldNote→`/field-notes/[slug]`, **experience→`/experience/[slug]`** (all get a hover affordance). readingEntry and capability remain **non-clickable contextual records** (no standalone routes by design). `currentUpdate` is never a related-entry target. **Never render a broken link.** (Experience became clickable in Phase 5I-B — see §16a.)
 
 ---
 
@@ -201,6 +201,20 @@ Draft-mode enable/disable routes · `sanityFetch` · `archiveFetch` · `SanityLi
 
 ---
 
+## 16a. Experience detail surface (added Phase 5I-B)
+
+Experience is a **first-class but restrained** archival record. It is **discovered**, never indexed:
+
+- **Discovery:** Story "Annotations" (compact, now **clickable** when a slug resolves) and Archive records (now clickable). **No `/experience` index, no header nav item, no experience grid or résumé timeline.**
+- **Detail:** `/experience/[slug]` (`src/app/(site)/experience/[slug]/page.tsx`) — a Server Component through `archiveFetch` + the editorial gate + `SanityLive` + Draft-Mode/Visual-Editing block, exactly like `/work/[slug]`. Dynamic (`ƒ`); no `generateStaticParams`, so drafts never become static params. `notFound()` when the gated query returns null.
+- **Queries:** `EXPERIENCE_DETAIL_QUERY` + `EXPERIENCE_META_QUERY` in `queries.ts`. Related refs use the **parenthesised** `(x[]->{…})[gate]` form (the featuredWork precedence fix from `576d1b5`); `RELATED_ENTRIES_PROJECTION` was corrected to the same shape.
+- **Page IA:** meta line (`X · year · type · date-range · phase`) → `title` (record identity) → `roleTitle` (my role) → `organisation · location` → `summary` → cover `Plate` → `narrativeBody` (`PortableProse`) → **On the record** (`verifiedFacts`, a hairline list — never badges/checkmarks) → **In numbers** (`metrics`, quiet figures with optional notes). Margin rail carries **references only** (Elsewhere = `websiteUrl` + `externalLinks`; Evidence = `evidenceFiles` via `FileList`; Related work = `relatedWork` → `/work/[slug]`; `RelatedEntries` for `relatedEntries`) — never duplicating header identity.
+- **`title` vs `roleTitle`:** `title` = the archival event/record identity (e.g. "WACMUN 2024"); `roleTitle` = the role inside it (e.g. "Deputy Secretary General · Chair, ICJ"). Keep them distinct to avoid duplication.
+- **Schema extension:** `experience` gained `externalLinks` (array of the existing `externalLink` object) and `evidenceFiles` (array of the existing `fileDownload` object). `websiteUrl` is retained. No new object types were invented; no fields removed/renamed.
+- **Story ordering:** experiences now sort **chronologically (oldest→newest)** — a formation timeline that mirrors the prose and reads less like a reverse-chron résumé.
+
+---
+
 ## 17. Patterns future work MUST reuse
 
 - **Pages are Server Components** in the `(site)` route group, using the container + grid, fetching via `archiveFetch`, ending with the `SanityLive` + `VisualEditing` + `DisableDraftMode` (Draft Mode) block.
@@ -217,7 +231,7 @@ Draft-mode enable/disable routes · `sanityFetch` · `archiveFetch` · `SanityLi
 - ❌ Agency copy ("Book a call", "Let's work together", "Scale your brand"), sales language, availability indicators, response-time promises.
 - ❌ Dashboards, progress bars, streaks, gamification, fake real-time/metrics.
 - ❌ GSAP or any new animation/UI/map/carousel/state package.
-- ❌ New CMS schemas, new content types, new top-level routes, reading/experience detail routes, a `/capabilities` page.
+- ❌ New CMS schemas, new content types, new top-level nav routes, a **reading** detail route, a `/capabilities` page, or an **`/experience` index** page. *(The `/experience/[slug]` detail route exists as of Phase 5I-B — §16a — but there is deliberately no experience index and no header nav item.)*
 - ❌ Redesigning the homepage, Ledger Sort, Index, or Work template.
 - ❌ Raw camelCase enum values in the UI; duplicated label maps; passing CMS prose through `MetaLine`.
 - ❌ Fetching Sanity in the browser; bypassing `archiveFetch`; publishing placeholder documents; fabricating content to fill empty states.

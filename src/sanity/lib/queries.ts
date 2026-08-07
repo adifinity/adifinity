@@ -243,7 +243,11 @@ const FILE_PROJECTION = /* groq */ `{
 // Authored cross-references, dereferenced through the same editorial
 // gate (capability has no status/visibility — its gate is its own
 // active flag). Shared by every detail page that carries marginalia.
-const RELATED_ENTRIES_PROJECTION = /* groq */ `relatedEntries[]->{
+// The deref+project is parenthesised so the trailing gate filters the
+// ARRAY, not each dereferenced document — the same GROQ precedence fix
+// applied to featuredWork in commit 576d1b5 (otherwise a valid ref
+// collapses to null and the map crashes).
+const RELATED_ENTRIES_PROJECTION = /* groq */ `(relatedEntries[]->{
       _id,
       _type,
       title,
@@ -264,7 +268,7 @@ const RELATED_ENTRIES_PROJECTION = /* groq */ `relatedEntries[]->{
       "experienceType": type,
       "capabilityName": name,
       "capabilityPhase": phase
-    }[defined(_id) && ($preview || (_type == "capability" && active == true) || (status == "published" && visibility == "public"))]`
+    })[defined(_id) && ($preview || (_type == "capability" && active == true) || (status == "published" && visibility == "public"))]`
 
 // The definitive Work entry. Every field is real schema; related
 // entries are dereferenced through the same editorial gate (capability
@@ -338,9 +342,10 @@ export const STORY_QUERY = defineQuery(`{
     profileImage
   },
   "experiences": *[_type == "experience" && ${PUBLIC_ENTRY_FILTER}]
-    | order(coalesce(dateRange.startDate, _createdAt) desc) {
+    | order(coalesce(dateRange.startDate, _createdAt) asc) {
     _id,
     title,
+    "slug": slug.current,
     organisation,
     roleTitle,
     summary,
@@ -361,6 +366,60 @@ export const STORY_QUERY = defineQuery(`{
     }[defined(_id) && ($preview || (status == "published" && visibility == "public"))]
   }
 }`)
+
+// ─────────────────────────────────────────────────────────────────────
+// Experience — the archival detail record. Discovered via Story
+// annotations and Archive records; opened at /experience/[slug]. Same
+// editorial gate as every other detail route. relatedWork and
+// relatedEntries parenthesise their deref+project so the gate filters the
+// array (the featuredWork precedence fix from commit 576d1b5).
+// ─────────────────────────────────────────────────────────────────────
+export const EXPERIENCE_DETAIL_QUERY = defineQuery(`
+  *[_type == "experience" && slug.current == $slug && ${PUBLIC_ENTRY_FILTER}][0]{
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    status,
+    visibility,
+    phase,
+    publishedAt,
+    updatedAt,
+    organisation,
+    roleTitle,
+    "experienceType": type,
+    dateRange,
+    location,
+    "narrativeBody": narrativeBody${PROSE_PROJECTION},
+    verifiedFacts,
+    "metrics": metrics[]{label, value, note},
+    coverMedia,
+    organisationLogo,
+    websiteUrl,
+    "externalLinks": externalLinks[]{label, url},
+    "evidenceFiles": evidenceFiles[]${FILE_PROJECTION},
+    "relatedWork": (relatedWork[]->{
+      _id,
+      _type,
+      title,
+      "slug": slug.current,
+      summary,
+      dateRange,
+      primaryCategory
+    })[defined(_id) && ${PUBLIC_ENTRY_FILTER}],
+    "relatedEntries": ${RELATED_ENTRIES_PROJECTION}
+  }
+`)
+
+// Route metadata only — kept light, like the other *_META queries.
+export const EXPERIENCE_META_QUERY = defineQuery(`
+  *[_type == "experience" && slug.current == $slug && ${PUBLIC_ENTRY_FILTER}][0]{
+    title,
+    roleTitle,
+    organisation,
+    summary
+  }
+`)
 
 // ─────────────────────────────────────────────────────────────────────
 // Now — the living working ledger. Ordered by editorial priority, then
@@ -713,6 +772,7 @@ export type WorkMetaPayload = {
 export type StoryExperience = {
   _id: string
   title: string | null
+  slug: string | null
   organisation: string | null
   roleTitle: string | null
   summary: string | null
@@ -720,6 +780,46 @@ export type StoryExperience = {
   phase: string | null
   experienceType: string | null
   verifiedFacts: string[] | null
+}
+
+export type MetricValue = {
+  label: string | null
+  value: string | null
+  note: string | null
+}
+
+export type ExperienceDetailPayload = {
+  _id: string
+  title: string | null
+  slug: string | null
+  summary: string | null
+  status: string | null
+  visibility: string | null
+  phase: string | null
+  publishedAt: string | null
+  updatedAt: string | null
+  organisation: string | null
+  roleTitle: string | null
+  experienceType: string | null
+  dateRange: DateRangeValue | null
+  location: string | null
+  narrativeBody: PortableTextBlock[] | null
+  verifiedFacts: string[] | null
+  metrics: MetricValue[] | null
+  coverMedia: SanityImageValue | null
+  organisationLogo: SanityImageValue | null
+  websiteUrl: string | null
+  externalLinks: ExternalLinkValue[] | null
+  evidenceFiles: FileAssetInfo[] | null
+  relatedWork: RelatedEntry[] | null
+  relatedEntries: RelatedEntry[] | null
+}
+
+export type ExperienceMetaPayload = {
+  title: string | null
+  roleTitle: string | null
+  organisation: string | null
+  summary: string | null
 }
 
 export type StoryCapability = {

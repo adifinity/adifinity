@@ -73,17 +73,22 @@ Field notes are **evidence from places**, not travel content. The `observation` 
 
 ---
 
-## 4. Experience (`experience`) → Story margin, Archive
+## 4. Experience (`experience`) → Story margin, Archive, **`/experience/[slug]`**
 
-**No detail page** (by design). Appears as **dated annotations in the Story margin** and as records in the Archive.
+**Has a detail page** since Phase 5I-B: `/experience/[slug]`. Discovered through the **Story margin** ("Annotations", now clickable) and **Archive** records (now clickable) — there is **no `/experience` index and no header nav item**. It opens like a referenced archival record, not a résumé entry.
 
 **Required:** `title` · `slug` · `organisation` · `roleTitle` · `dateRange` · `type` (Institution / Leadership / Education / Practice) · `status` · `visibility` · `phase`.
 
-**To appear:** published + public. Story lists experiences newest-first by start date.
+**To appear:** published + public. Story lists experiences **chronologically (oldest → newest)** by start date — a formation timeline.
 
-**Recommended:** `summary` (Archive) · `narrativeBody` (prose, not bullet résumé lines).
+**`title` vs `roleTitle` (important):** `title` = the archival identity of the record (e.g. "WACMUN 2024", "DRMCMUNA — Presidency"); `roleTitle` = your role inside it (e.g. "Deputy Secretary General · Chair, ICJ", "President"). Don't repeat the role in both — the detail page shows title as the headline and roleTitle beneath it.
 
-**Optional (not all surfaced yet):** `verifiedFacts` · `metrics` · `relatedWork` · `location` · `organisationLogo` · `websiteUrl`. Keep experiences factual and checkable.
+**Where each field renders:**
+- **Story annotation:** `title`, `roleTitle` — `organisation`, `dateRange` · `phase` (compact).
+- **Archive record:** `title`, `summary`, `organisation` — `roleTitle`, catalog meta.
+- **Detail page (`/experience/[slug]`):** everything — `summary` (lede), `coverMedia` (Fig. 1 plate; needs alt), `narrativeBody` (prose, not bullet résumé lines), `verifiedFacts` (renders as **"On the record"** — short checkable statements, *not* badges), `metrics` (**"In numbers"** — label + value + optional note), and a margin rail: `websiteUrl` + **`externalLinks`** (Elsewhere), **`evidenceFiles`** (Evidence — downloadable study guides/certificates/appointment material, human titles), `relatedWork` (→ Work), `relatedEntries` (cross-references).
+
+**Links & evidence (added 5I-B):** `websiteUrl` is the single primary link; use **`externalLinks`** (label + url) for several official pages (Facebook, Instagram, org site) and **`evidenceFiles`** (title + file) for downloadable artifacts. `relatedWork` points at Work items; `relatedEntries` at any archive entry. Keep experiences factual and checkable; honest student/youth-institution framing.
 
 ---
 

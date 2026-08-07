@@ -95,7 +95,22 @@ export const experienceType = defineType({
       name: 'websiteUrl',
       title: 'Website URL',
       type: 'url',
+      description: 'The single primary link. For several official pages, use External links below.',
       validation: (Rule) => Rule.uri({scheme: ['http', 'https']}),
+    }),
+    defineField({
+      name: 'externalLinks',
+      title: 'External links',
+      type: 'array',
+      of: [{type: 'externalLink'}],
+      description: 'Official pages and references — e.g. Facebook, Instagram, an organisation site.',
+    }),
+    defineField({
+      name: 'evidenceFiles',
+      title: 'Evidence files',
+      type: 'array',
+      of: [{type: 'fileDownload'}],
+      description: 'Downloadable artifacts — study guides, appointment material, certificates.',
     }),
   ],
   preview: {
