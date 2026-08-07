@@ -3,7 +3,19 @@
 _Live project tracker for populating the Adifinity archive with real content and
 preparing it for launch. This is the **control file** for Phase 5 (5A → launch)._
 
-**Latest activity — Phase 5I-E (2026-08-08):** **final Experience evidence set
+**Latest activity — Phase 5I-F (2026-08-08):** **Experience dates now display as
+intentionally coarse editorial years** (code only; stored CMS dates untouched; still
+**not published**). New helper **`formatExperiencePeriod`** (`src/lib/entry-meta.ts`)
+renders: Academics **2023–2024** · WACMUN **Jun 2024** (fixes the old
+"Jun 2024 — Jun 2024") · YAF **2024** · Presidency **2024–2025** · IBA
+**2025–present**. Wired into all four Experience date surfaces — `/experience`
+register, `/experience/[slug]`, Story annotation, and the Featured-Entry `X` branch
+— and the now-redundant standalone catalog-year was dropped from those meta lines.
+**Work keeps `formatDateRange`** (month precision) — verified GHOROA still shows
+"Jul 2026 — Jul 2026"; Archive `catalogLabel` (X · year · type) unchanged.
+`tsc`/`eslint`/`build` pass; no regressions. See §13.
+
+**Earlier — Phase 5I-E (2026-08-08):** **final Experience evidence set
 locked** (CMS content-correction; still **draft / private — NOT published**).
 **DRMCMUNA Academics** gained **four representative study-guide `evidenceFiles`**
 — DISEC · NATO · US Cabinet · USSR Cabinet, in that order (each inspected: page
@@ -660,3 +672,32 @@ Story, homepage, capabilities, current updates, and all Work docs untouched.**
 **Inspection (5I-E):** ICJ guide **79 pages** (PyMuPDF = pypdf = Spotlight agree; earlier "14" was the attachment tool), all 79 text-readable, opens, no PII. Four DRMCMUN guides: page counts agree across two libraries (DISEC 46 · NATO 35 · US Cabinet 24 · USSR Cabinet 21), **no email/phone/ID PII**, empty author metadata → uploaded as-is (no scrub needed). Provenance: DISEC & NATO name DRMCMUN 2024 internally; US/USSR Cabinet identified by filename + folder + committee match (US-Soviet Crisis Cabinet JCC). WACMUN registration re-verified: **146 submissions**, **5 committee options** (col E); country columns are representation preferences → no Countries metric.
 
 **5I-E verification (post-write, read-only):** Academics — exactly **4 evidenceFiles** in order, correct titles/descriptions, byte-exact assets, metrics 350+/8, FB preview + facts + narrative intact. WACMUN — metrics **Applications 146 / Committees offered 5**, **no 239/37/6**, no Countries metric, **ICJ preserved**, IG preview + restrained summary/facts intact. IBA/YAF/Presidency **rev unchanged**. All five **draft/private/no publishedAt; 0 published**. **Preview** detail projection (`$preview=true`) renders both edited pages with the new evidence/metrics; **public** projection returns `null` (404). Dates render **month-level** (no false day precision) → no code change (§9). All 5 asset URLs downloadable (200, byte-exact, `application/pdf`). Public: `/experience` 200 empty, `/story`/`/archive` no experience leak, all five slugs **404**, GHOROA unchanged. **Manual (Adi's Studio auth):** the Draft-Mode Presentation *visual* of the two edited detail pages (four guides open/download; 146/5 labelled correctly). Nothing published; nothing merged.
+
+**Phase 5I-F (2026-08-08) — coarse editorial Experience dates (CODE only):**
+No CMS mutations; stored `dateRange` values are byte-for-byte unchanged. Added
+`formatExperiencePeriod` and pointed the four Experience date surfaces at it.
+
+| File | Change |
+|------|--------|
+| `src/lib/entry-meta.ts` | **new** `formatExperiencePeriod(range)` — coarse editorial years (`2023–2024` / `Jun 2024` / `2024` / `2025–present`); en dash, no spaces; single-month events collapse to `Mon YYYY` (fixes WACMUN "Jun 2024 — Jun 2024"). `formatDateRange` untouched. |
+| `src/app/(site)/experience/page.tsx` | register row meta: `formatDateRange` → `formatExperiencePeriod`. |
+| `src/app/(site)/experience/[slug]/page.tsx` | detail meta: `formatDateRange` → `formatExperiencePeriod`; dropped redundant `yearOf` segment (+import). |
+| `src/app/(site)/story/page.tsx` | annotation meta: `formatDateRange` → `formatExperiencePeriod`. |
+| `src/components/featured-entry.tsx` | Experience (`X`) branch only: `formatDateRange` → `formatExperiencePeriod`, dropped redundant `yearOf`; **`W`/`U` branches untouched**. |
+| docs | handoff §16c, guide §4, evidence plan, this file. |
+
+**5I-F verification:** `formatExperiencePeriod` output matches all five targets +
+edge cases (same-year-multi-month → year; ongoing-with-end → `…–present`; null →
+null). `tsc`=0, `eslint`=0, `next build`=success (routes unchanged; `/experience`
+Static, `/experience/[slug]` Dynamic). **Regression:** GHOROA (Work) still renders
+`W · 2026 · Finance & Strategy · Jul 2026 — Jul 2026 · Demonstrated` on homepage +
+`/work` (month precision preserved); all public routes 200; `/experience` 200 empty;
+`/experience/nonexistent` **and** `/experience/wacmun-2024` → 404; no new console/
+server errors (only the pre-existing Studio styled-components warning + benign
+SanityLive dev reconnect). Experiences stay draft/private, so the coarse dates are
+proven at the formatter/data layer; the Draft-Mode *visual* of the five rows is the
+one manual check (needs Adi's Studio auth). Nothing published; nothing merged.
+
+**Note (out of scope):** GHOROA (a Work item) still shows the redundant
+"Jul 2026 — Jul 2026" because the single-month collapse is Experience-only by design;
+applying it to Work would be a separate, later decision.

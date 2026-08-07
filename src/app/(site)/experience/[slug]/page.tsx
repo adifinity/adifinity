@@ -16,9 +16,8 @@ import {
   catalogLabel,
   clean,
   experienceTypeLabel,
-  formatDateRange,
+  formatExperiencePeriod,
   phaseLabel,
-  yearOf,
 } from '@/lib/entry-meta'
 import { archiveFetch } from '@/sanity/lib/fetch'
 import { SanityLive } from '@/sanity/lib/live'
@@ -91,9 +90,8 @@ export default async function ExperienceDetailPage({
           <MetaLine
             parts={[
               'X',
-              yearOf(experience.dateRange?.startDate),
               experienceTypeLabel(experience.experienceType),
-              formatDateRange(experience.dateRange),
+              formatExperiencePeriod(experience.dateRange),
               phaseLabel(experience.phase),
             ]}
           />

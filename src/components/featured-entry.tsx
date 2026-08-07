@@ -9,6 +9,7 @@ import {
   clean,
   formatDate,
   formatDateRange,
+  formatExperiencePeriod,
   phaseLabel,
   updateLabel,
   yearOf,
@@ -37,7 +38,7 @@ export function FeaturedEntry({ entry }: { entry: FeaturedEntryPayload | null })
     type === 'workItem'
       ? ['W', yearOf(entry.dateRange?.startDate), categoryLabel(entry.primaryCategory), formatDateRange(entry.dateRange), phaseLabel(entry.phase)]
       : type === 'experience'
-        ? ['X', yearOf(entry.dateRange?.startDate), formatDateRange(entry.dateRange), phaseLabel(entry.phase)]
+        ? ['X', formatExperiencePeriod(entry.dateRange), phaseLabel(entry.phase)]
         : ['U', yearOf(entry.date), updateLabel(entry.label), formatDate(entry.date)]
 
   const body = type === 'currentUpdate' ? entry.description : entry.summary

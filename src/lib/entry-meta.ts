@@ -127,6 +127,29 @@ export function formatDateRange(range: DateRangeValue | null | undefined): strin
   return end ? `${start} — ${end}` : start
 }
 
+// Intentionally coarse editorial period for Experience records. The stored
+// ISO dates carry approximate day-level precision that we deliberately never
+// surface here — a formation is told in years, not days:
+//   • ongoing            → "2025–present"
+//   • no recorded end    → the start year, e.g. "2024"
+//   • spans two years    → "2023–2024"
+//   • one calendar month → "Jun 2024" (a single, discrete event)
+//   • same year, months  → the year alone, e.g. "2024"
+// Distinct from formatDateRange (Work keeps month precision); ranges use an
+// en dash with no surrounding spaces.
+export function formatExperiencePeriod(range: DateRangeValue | null | undefined): string | null {
+  const start = parseDate(range?.startDate)
+  if (!start) return null
+  const startYear = start.getUTCFullYear()
+  if (range?.isOngoing) return `${startYear}–present`
+  const end = parseDate(range?.endDate)
+  if (!end) return `${startYear}`
+  const endYear = end.getUTCFullYear()
+  if (endYear !== startYear) return `${startYear}–${endYear}`
+  if (end.getUTCMonth() === start.getUTCMonth()) return formatMonth(range?.startDate)
+  return `${startYear}`
+}
+
 // The approved stable, non-sequential catalog label: TYPE · YEAR ·
 // CATEGORY, built only from deterministic entry data. Missing segments
 // are omitted rather than faked.

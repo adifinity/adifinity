@@ -6,7 +6,7 @@ import { DisableDraftMode } from '@/components/disable-draft-mode'
 import { EmptyNote } from '@/components/empty-note'
 import { PortableProse } from '@/components/portable-prose'
 import { SectionHeading } from '@/components/section-heading'
-import { clean, formatDateRange, phaseLabel } from '@/lib/entry-meta'
+import { clean, formatExperiencePeriod, phaseLabel } from '@/lib/entry-meta'
 import { TRANSFORMATION_ARC } from '@/lib/site-copy'
 import { archiveFetch } from '@/sanity/lib/fetch'
 import { SanityLive } from '@/sanity/lib/live'
@@ -83,7 +83,7 @@ export default async function StoryPage() {
                   const inner = (
                     <>
                       <p className="font-mono text-meta uppercase text-graphite">
-                        {[formatDateRange(experience.dateRange), phaseLabel(experience.phase)]
+                        {[formatExperiencePeriod(experience.dateRange), phaseLabel(experience.phase)]
                           .filter(Boolean)
                           .join(' · ')}
                       </p>

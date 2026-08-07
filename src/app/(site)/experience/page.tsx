@@ -6,7 +6,7 @@ import { VisualEditing } from 'next-sanity/visual-editing'
 import { DisableDraftMode } from '@/components/disable-draft-mode'
 import { EmptyNote } from '@/components/empty-note'
 import { MetaLine } from '@/components/meta-line'
-import { clean, experienceTypeLabel, formatDateRange, phaseLabel } from '@/lib/entry-meta'
+import { clean, experienceTypeLabel, formatExperiencePeriod, phaseLabel } from '@/lib/entry-meta'
 import { archiveFetch } from '@/sanity/lib/fetch'
 import { SanityLive } from '@/sanity/lib/live'
 import { EXPERIENCE_INDEX_QUERY, type ExperienceListItem } from '@/sanity/lib/queries'
@@ -66,7 +66,7 @@ export default async function ExperienceIndexPage() {
                     parts={[
                       'X',
                       experienceTypeLabel(experience.experienceType),
-                      formatDateRange(experience.dateRange),
+                      formatExperiencePeriod(experience.dateRange),
                       phaseLabel(experience.phase),
                     ]}
                   />

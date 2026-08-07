@@ -83,6 +83,8 @@ Field notes are **evidence from places**, not travel content. The `observation` 
 
 **Ordering — chronological, by factual date:** both `/experience` and the Story margin sort experiences **ascending by `dateRange.startDate`** (earliest → current) — a *formation*, not reverse-chron résumé order. The sequence is driven entirely by the start dates, so **if the order looks wrong, fix the dates in the Studio — never expect a manual/publish/creation order.** An ongoing record (no `endDate`, `isOngoing`) with `phase: current` sorts by its start date and reads as the current chapter.
 
+**Date display — intentionally coarse (Phase 5I-F):** you can store real ISO dates (including an approximate day like `2024-09-01`); Experience surfaces show them as **editorial years**, never the stored day: `2023–2024` (spans two years), `Jun 2024` (a single-month event), `2024` (a year with no recorded end), `2024–2025`, `2025–present` (ongoing). To move a record's displayed period, edit `dateRange.startDate`/`endDate`/`isOngoing` in the Studio — there is no separate "display date" field. Set `isOngoing` for the current chapter to get `…–present`. (Work items keep month-level display — this coarsening is Experience-only.)
+
 **`title` vs `roleTitle` (important):** `title` = the archival identity of the record (e.g. "WACMUN 2024", "DRMCMUNA — Presidency"); `roleTitle` = your role inside it (e.g. "Deputy Secretary General · Chair, ICJ", "President"). Don't repeat the role in both — the detail page shows title as the headline and roleTitle beneath it.
 
 **Where each field renders:**
